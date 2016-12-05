@@ -1,0 +1,46 @@
+
+extends ../layoutGl.jade
+
+block content
+    .row
+          h2.darkbule Video List
+
+          .form-group
+            .col-sm-1
+              h3
+                a.btn.btn-success(href="/gl/movie/add") New Video
+            .col-sm-2
+              h3
+                a.btn.btn-success(onclick="createVideosInfomation()") Download Infomation of Videos
+            //- a.btn.btn-success(href="/gl/setNetwork", style="margin-left: 15px;")
+            //-   span.fa.fa-cog(aria-hidden="true")
+            //-   | 设置网络参数
+          table.table.table-hover.table-bordered(style="table-layout:fixed")
+            thead
+              tr
+                th(style="width:350px;white-space:nowrap;overflow:hidden; text-overflow:ellipsis;") Name
+                th(style="width:100px") Video Type
+                th Viewers
+                th(style="width:150px") Evaluation Data
+                th Comments
+                th(style="width:180px") Parameter settings
+                th Delete
+             tbody
+               each item in movies
+                 tr(class="item-id-#{item._id}")
+                   td(style="width:300px;white-space:nowrap;overflow:hidden; text-overflow:ellipsis;") 
+                    a(target="_blank",href="../gl/movieInfo/#{item._id}" style="text-decoration: underline") #{item.title}
+                   each cat in cates
+                      if cat.id == item.movieCates
+                        td #{cat.title}
+                   td #{item.pv}
+                   //- td #{item.ti}
+                   //- td #{item.si}
+                   //- td #{moment(item.meta.createAt.toString()).format('YYYY/MM/DD HH:mm:ss')} 
+                   td: a.btn.btn-info(target="_blank",href="/gl/movie/analysisList/#{item.dir}") Evaluation Data
+                   td: a.btn.btn-info(target="_blank",href="../movie/comment/#{item._id}") Comments
+                   td: a.btn.btn-primary(target="_blank",href="/gl/movie/setparams/#{item._id}") Parameter settings
+                   td: button.btn.btn-danger.del(type="button",data-id="#{item._id}") Delete
+
+          script(src="/js/movie.js")
+
