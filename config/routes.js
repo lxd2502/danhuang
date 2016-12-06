@@ -53,8 +53,10 @@ module.exports = function(app){
 	
 
 	// //user
+	app.get('/user/update/:id',User.signinRequired, User.update);
+	app.delete('/user/delete/:id',User.signinRequired, User.delete);
 	app.post('/user/signup',User.signup);
-	app.get('/admin/user/list', User.userlist);
+	app.get('/user/list',User.signinRequired, User.userlist);
 	app.post('/user/signin',User.signin);
 	app.get('/user/logout',User.logout);
 	app.get('/signin',User.showSignin);

@@ -38,6 +38,34 @@ exports.userlist = function(req,res){
 	})
 }
 
+exports.update = function(req,res){
+	console.log("-----contr/user.js--- update function")
+	var oid = req.params.id;
+
+	if(oid){
+		User.findById(oid,function(err,MovieCate){
+			res.render('movieCateAdd',{
+				movieCate: MovieCate
+			})
+		})
+	}
+}
+
+exports.delete = function(req,res){
+	console.log("-----contr/user.js--- delete function")
+	var id = req.params.id;
+	if(id){
+		User.remove({_id:id},function(err,user){
+			if(err){console.log("err = " + err)}
+			else{
+				// delete req.session.user
+				// res.redirect('/');
+				res.json({success:1})
+			}
+		});
+	}
+}
+
 //signin
 exports.signin = function(req,res){
 	var _user = req.body.user;

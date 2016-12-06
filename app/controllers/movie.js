@@ -247,12 +247,24 @@ exports.delete = function(req,res){
 			child = child_process.execSync(cmd,function(err,out) { 
 			  	console.log(out);
 			});
-			Movie.remove({_id:id},function(err,Movie){
+			MovieCate.findById(Movie.movieCates, function(err, cate){
 				if(err){console.log("err = " + err)}
-				else{
-					res.json({success:1})
-				}
-			})
+				console.log("cate.movies 1 = " + cate.movies);
+				var index = cate.movies.indexOf(id);
+				cate.movies.splice(index,1);
+				console.log("cate.movies 2 = " + cate.movies);
+				cate.save
+				cate.save(function(err,MovieCate2){
+					if(err){console.log(err);}
+					Movie.remove({_id:id},function(err,Movie){
+						if(err){console.log("err = " + err)}
+						else{
+							res.json({success:1})
+						}
+					});
+				});
+			});
+			
 		});
 	}
 }

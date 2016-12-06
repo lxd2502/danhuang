@@ -113,11 +113,46 @@ exports.update = function(req,res){
 
 	if(oid){
 		MovieCate.findById(oid,function(err,MovieCate){
-			res.render('movieCateAdd',{
-				movieCate: MovieCate
-			})
-		})
+			if(err){console.log(err);}
+			Movie.findByCateId(oid, function(err, movies){
+				if(err){console.log(err);}
+				console.log("movies = " + movies);
+				var temp = [];
+				for (var j = 0; j < movies.length; j++) {
+					temp[j] = movies[j]._id;
+				}
+				MovieCate.movies = temp;
+				console.log("temp = " + temp);
+				MovieCate.save(function(err,category){
+					if(err){console.log(err);}
+					console.log("update success");
+				});
+			});
+		});
 	}
+}
+
+function updateCate() {
+	console.log("-----contr/updateCate.js--- updateCate function")
+	MovieCate.fetch(function(err,mCates){
+		if(err){
+			coonsole.log(err);
+		}
+		for (var i = mCates.length - 1; i >= 0;) {
+			Movie.findByCateId(mCates[i]._id, function(err, movies){
+				console.log("movies = " + movies);
+				var temp = [];
+				for (var j = 0; j < movies.length; j++) {
+					temp[j] = movies[j]._id;
+				}
+				mCates[i].movies = temp;
+				console.log("i = " + i);
+				console.log("temp = " + temp);
+				i--;
+			})
+		}
+		
+	})	
 }
 
 exports.delete = function(req,res){

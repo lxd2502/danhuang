@@ -17,7 +17,9 @@ block content
                td #{item.name}
                //- td #{moment(item.meta.createdAt).format('MM/DD/YYYY')}
                td: a(target-"_blank",href="../movie/#{item._id}") chakan
-               td: a(target-"_blank",href="../admin/update/#{item._id}") xiugai
+               td: a(target-"_blank",href="../admin/update/#{item._id}") 
                td: button.btn.btn-danger.del(type="button",data-id="#{item._id}") shanchu
+
+      script(src="/js/user.js")
 
 

@@ -1,24 +1,28 @@
 extends ../guestLayout.jade
 
 block content
-	aside.left-side.sidebar-offcanvas
+	aside.left-side.sidebar-offcanvas(style="top:0;background-color:#f9f9f9;")
 		section.sidebar
 			//- img(src="/img/buptlogo1.png",alt="404-img")
-			div.user-panel(style='padding: 0 0 0 85px;')
-				i.fa.fa-user
-				h2 Guest
-			ul.sidebar-menu
+			div.user-panel(style='padding: 0 0 0 85px;background-color:#009999')
+				h2 Welcome
+			ul.sidebar-menu(style="background:#555")
+				li.typeli(style="border-bottom:0.5px solid #ccc;")
+					a.typelist(href="/guestIndex")
+						i.fa.fa-film
+						span Recommendation
+						small.badge.pull-right.bg-green 20
 				each cat in mCates
-					li(style="border-bottom:0.5px solid #affffe;")
-						a.typelist(href="##{cat._id}")
+					li.typeli(style="border-bottom:0.5px solid #ccc;")
+						a.typelist(href="/guestIndex/#{cat._id}")
 							i.fa.fa-film
 							span #{cat.title}
 							small.badge.pull-right.bg-green #{cat.movies.length}
 	aside.right-side
-		#ShowDelay.light.input(type="hidden",name="movie[showdelay]",value="#{movie.showdelay}") #{movie.showdelay}
+		#ShowDelay.light.input(type="hidden",name="movie[showdelay]",style="display:none" value="#{movie.showdelay}") #{movie.showdelay}
 		section.content-header
 			h1.darkbule
-				|Homepage
+				|MovieDetail
 				small Video Comment
 		section.content
 			div.row
@@ -158,10 +162,3 @@ block content
 
 
 	script(src="/js/movieDetail.js")
-									
-
-
-
-									
-
-

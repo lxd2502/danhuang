@@ -60,18 +60,22 @@ a{
 	color:#FFFFFF;
 	text-decoration: none;
 	cursor: pointer;
-	margin:0 25px 0 0px!important;
-	background:#004b82;
+	margin:0 10px 0 0px!important;
+	/*background:#004b82;*/
 	font-weight:300;
 	font-size:16px;
 	font-family: 'Titillium Web', sans-serif;
 	
-	-webkit-transition: color 0.1s linear 0s;	
+	/*-webkit-transition: color 0.1s linear 0s;	
 	   -moz-transition: color 0.1s linear 0s;
 		 -o-transition: color 0.1s linear 0s;
-		    transition: color 0.1s linear 0s;
+		    transition: color 0.1s linear 0s;*/
 }
-
+.typeli a:hover{
+    color:#fff;}
+.typeli:hover{
+    background: #999;
+}
 .email-blue{
 	color:#1d8ff0;
 	text-decoration: none;
@@ -87,7 +91,7 @@ a:hover,
 a:active,
 a:focus{
 	outline: 0;
-	color:#8c909b;
+    color:#8c909b;
 	text-decoration:none;
 }
 
