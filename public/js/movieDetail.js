@@ -278,6 +278,8 @@ function submitScore1(id, ip, address){
             if(data.result == 1){
             	$('#commentModal one').text("Thanks for your ratings");
             	$('#commentModal').modal('show');
+            	// location.href="/guestIndex";
+            	setTimeout(close(), 1000);  
             }
         },
         error: function() {

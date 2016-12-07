@@ -47,6 +47,7 @@ function submitForm(){
 		            	console.log("finish");
 						$('#okButton').removeClass("disabled");
 						clearInterval(interval);
+						location.href = '/gl/movie';
 					}
 		        },
 		        error: function() {
