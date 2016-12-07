@@ -18,7 +18,8 @@ block content
 							i.fa.fa-film
 							span #{cat.title}
 							small.badge.pull-right.bg-green #{cat.movies.length}
-	aside.right-side
+	aside.right-side(onload="submitUserInfo()")
+		input#movieID(type="hidden",name="movie[_id]",value=movie._id)
 		#ShowDelay.light.input(type="hidden",name="movie[showdelay]",style="display:none" value="#{movie.showdelay}") #{movie.showdelay}
 		section.content-header
 			h1.darkbule
@@ -158,5 +159,6 @@ block content
 					button.btn.btn-default(type="button" data-dismiss="modal" )
 						Close Close
 
-
 	script(src="/js/movieDetail.js")
+
+

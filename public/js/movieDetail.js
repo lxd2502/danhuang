@@ -5,6 +5,8 @@ var address = '';
 var browserType = '';
 var systemType = '';
 
+window.onload=submitUserInfo();
+
 video.onplay = function() {
 	if (!isPlay) {
 		isPlay = true;
@@ -276,10 +278,10 @@ function submitScore1(id, ip, address){
         cache: false,
         success: function(data) {
             if(data.result == 1){
-            	$('#commentModal one').text("Thanks for your ratings");
-            	$('#commentModal').modal('show');
-            	// location.href="/guestIndex";
-            	setTimeout(close(), 1000);  
+            	// $('#commentModal one').text("Thanks for your ratings");
+            	// $('#commentModal').modal('show');
+            	location.href="/guestIndex";
+            	// setTimeout(close(), 1000);  
             }
         },
         error: function() {
@@ -289,6 +291,140 @@ function submitScore1(id, ip, address){
     });
 }
 
+function submitUserInfo(){
+	var id = $('#movieID').val();
+	console.log("submitUserInfo id = " + id);
+	var url = 'http://chaxun.1616.net/s.php?type=ip&output=json&callback=?&_='+Math.random();
+	$.ajaxSettings.async = false;  
+	$.getJSON(url, function(data){
+		//$("#b").html("显示：IP【"+data.Ip+"】 地址【"+data.Isp+"】 浏览器【"+data.Browser+"】 系统【"+data.OS+"】");
+		console.log('－－－ browserType = ' + browserType);
+		console.log('－－－ systemType = ' + systemType);
+		ip = data.Ip;
+		address = data.Isp;
+		browserType = data.Browser;
+		systemType = data.OS;
+		console.log('－－－ ip = ' + ip);
+		console.log('－－－ address = ' + address);
+		console.log('－－－ browserType = ' + browserType);
+		console.log('－－－ systemType = ' + systemType);
+		submitUserInfo1(id, ip, address);
+	});
+}
+
+function submitUserInfo1(id, ip, address){
+	//console.log("video.currentTime1 = " + $('#video')[0].currentTime);
+	var currentTime = document.querySelector('video').currentTime;
+	var buffered = document.querySelector('video').buffered;
+	console.log("video.currentTime2 = " + currentTime);
+	console.log("video.buffered = " + buffered);
+	var bufferTime = 0;
+	// buffered.end(0) - buffered.start(0);
+	// console.log("video.currentTime3 = " + document.getElementById("video").currentTime);
+
+	var browserType = getBrowserInfo();
+	var browserVersion = (browserType+"").replace(/[^0-9.]/ig,""); 
+	var userAgent = navigator.userAgent; 
+	var cookieEnabled = navigator.cookieEnabled; // 返回用户浏览器是否启用了cookie
+	var platform = navigator.platform;
+	var systemType = checkOS();
+	var pluginsCount = navigator.plugins.length;
+	var plugins = getPluginName();
+	var userLanguage = navigator.language; // 用户在自己的操作系统上设置的语言（火狐没有）
+	var javaEnabled = navigator.javaEnabled();
+	var flash = checkePlugs('Shockwave Flash');
+	var screenWidth = window.screen.width;
+	var screenHeight = window.screen.height;
+	var color = window.screen.colorDepth;
+	var pixel = window.screen.pixelDepth;
+
+	// var url = 'http://chaxun.1616.net/s.php?type=ip&output=json&callback=?&_='+Math.random();
+	// $.ajaxSettings.async = false;  
+	// $.getJSON(url, function(data){
+	// 	//$("#b").html("显示：IP【"+data.Ip+"】 地址【"+data.Isp+"】 浏览器【"+data.Browser+"】 系统【"+data.OS+"】");
+	// 	console.log('－－－ browserType = ' + browserType);
+	// 	console.log('－－－ systemType = ' + systemType);
+	// 	ip = data.Ip;
+	// 	address = data.Isp;
+	// 	browserType = data.Browser;
+	// 	systemType = data.OS;
+	// 	console.log('－－－ ip = ' + ip);
+	// 	console.log('－－－ address = ' + address);
+	// 	console.log('－－－ browserType = ' + browserType);
+	// 	console.log('－－－ systemType = ' + systemType);
+	// });
+
+	console.log('id = ' + id);
+	console.log('browserType = ' + browserType);
+	console.log('browserVersion = ' + browserVersion);
+	console.log('userAgent = ' + userAgent);
+	console.log('cookieEnabled = ' + cookieEnabled);
+	console.log('platform = ' + platform);
+	console.log('systemType = ' + systemType);
+	console.log('pluginsCount = ' + pluginsCount);
+	console.log('plugins = ' + plugins);
+	console.log('userLanguage = ' + userLanguage);
+	console.log('javaEnabled = ' + javaEnabled);
+	console.log('flash = ' + flash);
+	console.log('screenWidth = ' + screenWidth);
+	console.log('screenHeight = ' + screenHeight);
+	console.log('color = ' + color);
+	console.log('pixel = ' + pixel);
+	console.log('ip = ' + ip);
+	console.log('address = ' + address);
+	console.log('currentTime = ' + currentTime);
+	console.log('bufferTime = ' + bufferTime);
+
+	// if(!clarity) { clarity = 0;}
+	// if(!loadSpeed) { loadSpeed = 0;} 
+	// if(!quality) { quality = 0;} 
+	// if (!vcontent || !clarity || !loadSpeed || !quality) {
+	// 	$('#noticeModal').modal('show');
+	// 	return;
+	// }
+
+	var datas = {
+		'id': id,
+		'browserType': browserType,
+		'browserVersion': browserVersion,
+		'userAgent': userAgent,
+		'cookieEnabled': cookieEnabled,
+		'platform': platform,
+		'systemType': systemType,
+		'pluginsCount': pluginsCount,
+		'plugins': plugins,
+		'userLanguage': userLanguage,
+		'javaEnabled': javaEnabled,
+		'flash': flash,
+		'screenWidth': screenWidth,
+		'screenHeight': screenHeight,
+		'color': color,
+		'pixel': pixel,
+		'ip': ip,
+		'address': address,
+		'currentTime': currentTime,
+		'bufferTime': bufferTime
+	}
+	$.ajax({
+        url: '/movie/submitUserInfo',
+        type: 'post',
+        //data: "id="+id+"&clarity="+clarity+"&loadSpeed="+loadSpeed+"&quality="+quality,
+        data: datas,
+        cache: false,
+        success: function(data) {
+            if(data.result == 1){
+            	// $('#commentModal one').text("Thanks for your ratings");
+            	// $('#commentModal').modal('show');
+            	//location.href="/guestIndex";
+            	// setTimeout(close(), 1000);  
+            }
+        },
+        // error: function() {
+        //     $('#commentModal one').text("Error! Please retry!");
+        //    	$('#commentModal').modal('show');
+        // }
+    });
+}
 
 function close() {
 	location.href="/guestIndex";

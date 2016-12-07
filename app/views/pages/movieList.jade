@@ -40,8 +40,10 @@ block content
                    each cat in cates
                       if cat.id == item.movieCates
                         td #{cat.title}
-                   td #{item.pv}
-                   td #{item.comments}
+                   td 
+                    a(target="_blank",href="/movie/userInfo/#{item._id}" style="text-decoration: underline") #{item.pv}
+                   td 
+                    a(target="_blank",href="../movie/comment/#{item._id}" style="text-decoration: underline") #{item.comments}
                    //- td #{item.ti}
                    //- td #{item.si}
                    //- td #{moment(item.meta.createAt.toString()).format('YYYY/MM/DD HH:mm:ss')} 

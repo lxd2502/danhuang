@@ -1,6 +1,7 @@
 var Index = require('../app/controllers/index')
 var MovieCate = require('../app/controllers/movieCate')
 var Movie = require('../app/controllers/movie')
+var UserInfo = require('../app/controllers/userInfo')
 var User = require('../app/controllers/user')
 var Comment = require('../app/controllers/comment')
 
@@ -13,7 +14,9 @@ module.exports = function(app){
 	app.get('/aboutus',Index.aboutus)
 	app.get('/movie/:id',Movie.detail)
 	app.get('/movie/comment/:id',Movie.showComment)
+	app.get('/movie/userInfo/:id',UserInfo.showUserInfo)
 	app.post('/movie/submitScore', Movie.submitScore)
+	app.post('/movie/submitUserInfo', UserInfo.submitUserInfo)
 	app.post('/movie/mvUpload', Movie.mvUpload)
 	app.post('/movie/baseMovieUpload', Movie.baseMovieUpload)
 	app.post('/movie/saveNetworkStatus', Movie.saveNetworkStatus)
@@ -29,6 +32,7 @@ module.exports = function(app){
 
 	//comment
 	app.get('/gl/comment/detail/:movieId/:commentId', User.signinRequired,Comment.commentDetail)
+	app.get('/gl/userInfo/detail/:movieId/:infoId', User.signinRequired,UserInfo.userInfoDetail)
 
 	app.get('/movie/covers/:name', Movie.movieCover)
 	app.get('/movie/covers/:path/:name', Movie.movieCover)
