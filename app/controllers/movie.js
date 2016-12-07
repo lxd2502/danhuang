@@ -39,12 +39,53 @@ exports.list = function(req,res){
 		if(err){
 			console.log(err);
 		}
+
+		var totalViews = 0, totalComments = 0;
+		for (var i = Movies.length - 1; i >= 0; i--) {
+			totalViews += Movies[i].pv;
+			totalComments += Movies[i].comments;
+		}
+
+		console.log("totalViews = " + totalViews);
+		console.log("totalComments = " + totalComments);
+
+		// if (Movies.length > 0) {
+		// 	for (var i = 0; i < Movies.length - 1;) {
+		// 		Comment.findByMovieId(Movies[i].id, function(err,comments){
+		// 			if(err){console.log(err)}
+		// 			console.log("movie comments length : " + comments.length);
+		// 			// Movies[i].comments = comments.length;
+		// 			if (comments.length>0) {
+		// 				Movie.findById(comments[0].movie, function(err, movieA){
+		// 					movieA.comments = comments.length;
+		// 					movieA.save(function(err, movieB){
+		// 						if(err){console.log(err)}
+		// 						console.log("success saved!");
+		// 					});
+		// 				});
+		// 			}
+		// 		})
+		// 		i++;
+		// 		if (i == Movies.length) {
+		// 			MovieCate.fetch(function(err,cates){
+		// 				if(err){console.log(err)}	
+		// 					res.render('movieList',{
+		// 					movies:Movies,
+		// 					cates:cates
+		// 				});
+		// 			})
+		// 		}
+		// 	}
+		// }
+
 		// console.log("moviesList = " + JSON.stringify(Movies));
 		MovieCate.fetch(function(err,cates){
 			if(err){console.log(err)}	
 				res.render('movieList',{
 				movies:Movies,
-				cates:cates
+				cates:cates,
+				totalViews:totalViews,
+				totalComments:totalComments
 			});
 		})
 		
@@ -282,6 +323,16 @@ exports.movieInfo = function(req,res){
 		}
 		else{
 			// calculateMovieInfo(Movie);
+			// used to update comments for the movie
+			// Comment.findByMovieId(id, function(err, comments){
+			// 	if(err){ console.log(err); }
+			// 	Movie.comments = comments.length;
+			// 	Movie.save(function(err, movie){
+			// 		if(err){ console.log(err); }
+			// 		console.log("update comments of movie success!");
+			// 	});
+			// });
+			// return;
 			console.log("movie content : " + JSON.stringify(Movie));
 			if(Movie.content){
 				Movie.content = mark(Movie.content)
@@ -464,15 +515,28 @@ exports.submitScore = function(req,res){
 			bufferTime: bufferTime
 		})
 
-		_Comment.save(function(err,Movie){
+		_Comment.save(function(err,comment){
 			console.log("id2 = " + id);
 			if(err){
 				console.log("id3 = " + id);
 				console.log(err);
 				res.json({result : 0});
 			}else{
-				console.log("id4 = " + id);
+				Movie.update({_id:id},{$inc:{comments:1}},function(err){
+					if(err){console.log(err);}
+				})
 				res.json({result : 1});
+				// Comment.findByMovieId(id, function(err, comments){
+				// 	if(err){ console.log(err); }
+				// 	Movie.findById(id, function(err, movie){
+				// 		if(err){ console.log(err); }
+				// 		movie.comments = comments.length;
+				// 		movie.save(function(err, movie){
+				// 			if(err){ console.log(err); }
+				// 			res.json({result : 1});
+				// 		});
+				// 	});
+				// });
 			}
 		})		
 	}else{

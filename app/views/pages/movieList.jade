@@ -15,16 +15,23 @@ block content
             //- a.btn.btn-success(href="/gl/setNetwork", style="margin-left: 15px;")
             //-   span.fa.fa-cog(aria-hidden="true")
             //-   | 设置网络参数
+          .form-group
+            .col-sm-12
+              legend
+              h4.darkbule
+                i.fa.fa-area-chart 
+                |&nbsp;Viewers: Total&nbsp; <span style="color:red; font-weight: bold;">#{totalViews}</span> &nbsp;items, Comments: Total&nbsp; <span style="color:red; font-weight: bold;">#{totalComments}</span> &nbsp;items
           table.table.table-hover.table-bordered(style="table-layout:fixed")
             thead
               tr
-                th(style="width:350px;white-space:nowrap;overflow:hidden; text-overflow:ellipsis;") Name
-                th(style="width:100px") Video Type
-                th Viewers
-                th(style="width:150px") Evaluation Data
+                th(style="width:330px;white-space:nowrap;overflow:hidden; text-overflow:ellipsis;") Name
+                th(style="width:80px") Video Type
+                th(style="width:95px") Viewers
                 th Comments
+                th(style="width:150px") Evaluation Data
+                th View Comments
                 th(style="width:180px") Parameter settings
-                th Delete
+                th(style="width:95px") Delete
              tbody
                each item in movies
                  tr(class="item-id-#{item._id}")
@@ -34,6 +41,7 @@ block content
                       if cat.id == item.movieCates
                         td #{cat.title}
                    td #{item.pv}
+                   td #{item.comments}
                    //- td #{item.ti}
                    //- td #{item.si}
                    //- td #{moment(item.meta.createAt.toString()).format('YYYY/MM/DD HH:mm:ss')} 

@@ -5,7 +5,7 @@ block content
           h2.darkbule Comments List of #{movie.title}
           h4.darkbule
             i.fa.fa-area-chart 
-            |&nbsp;Total<span style="color:red; font-weight: bold;">#{comments.length}</span>items
+            |&nbsp;Total&nbsp; <span style="color:red; font-weight: bold;">#{comments.length}</span> &nbsp;items
           table.table.table-hover.table-bordered
             thead
               tr
@@ -32,8 +32,7 @@ block content
                 .modal-content
                   .modal-header
                     button.close(type="button" data-dismiss="modal" aria-label="Close")
-                      span(aria-hidden="true")
-                        &times;
+                      span(aria-hidden="true") &times;
                     h4.modal-title
                       Modal Notice:
                   .modal-body

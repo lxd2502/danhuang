@@ -16,6 +16,7 @@ var MovieSchema = new Schema({
 	si:String,
 	edistance:{type:String, default:""},
 	showdelay: {type:Number, default:0},
+	comments: {type:Number, default:0},
 	movieCates:{
 		type: ObjectId,
 		ref: 'MovieCate'
