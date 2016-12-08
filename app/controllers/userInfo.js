@@ -107,9 +107,9 @@ exports.submitUserInfo = function(req,res){
 			if(err){
 				console.log(err);
 			}else{
-				// Movie.update({_id:id},{$inc:{comments:1}},function(err){
-				// 	if(err){console.log(err);}
-				// })
+				Movie.update({_id:id},{$inc:{pv1:1}},function(err){
+					if(err){console.log(err);}
+				})
 				console.log("userInfo saved succeed!");
 				// res.json({result : 1});
 			}

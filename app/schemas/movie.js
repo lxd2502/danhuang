@@ -9,6 +9,11 @@ var MovieSchema = new Schema({
 		type:Number,
 		default:0
 	},
+	//pv1中间添加字段，用于标记存储的用户信息数
+	pv1:{
+		type:Number,
+		default:0
+	},
 	pic: String,
 	movie: String,
 	dir: String,

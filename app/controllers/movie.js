@@ -13,6 +13,7 @@ var processor = require('process');
 var moment = require('moment');
 var glob = require('glob');
 var nodeExcel = require('excel-export');
+var UserInfo = require("../models/userInfo");
 
 var _ = require('underscore');
 
@@ -40,10 +41,11 @@ exports.list = function(req,res){
 			console.log(err);
 		}
 
-		var totalViews = 0, totalComments = 0;
+		var totalViews = 0, totalComments = 0, pv1 = 10;
 		for (var i = Movies.length - 1; i >= 0; i--) {
 			totalViews += Movies[i].pv;
 			totalComments += Movies[i].comments;
+			pv1 += Movies[i].pv1;
 		}
 
 		console.log("totalViews = " + totalViews);
@@ -85,7 +87,8 @@ exports.list = function(req,res){
 				movies:Movies,
 				cates:cates,
 				totalViews:totalViews,
-				totalComments:totalComments
+				totalComments:totalComments,
+				pv1:pv1
 			});
 		})
 		
