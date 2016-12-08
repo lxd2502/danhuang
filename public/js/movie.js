@@ -19,6 +19,7 @@ $(function(){
 	})
 })
 
+//下载所有的视频信息
 function createVideosInfomation() {
 	$.ajax({
         url: '/gl/movie/createVideosInfomation',
@@ -27,6 +28,38 @@ function createVideosInfomation() {
         cache: false,
         success: function(data) {
             location.href = '/gl/movieInfos/videosInfomation.xlsx';
+            console.log("data = " + JSON.stringify(data));
+        },
+        error: function() {
+        }
+    });
+}
+
+//下载全部的comments信息
+function getAllComments() {
+	$.ajax({
+        url: '/gl/movie/getAllComments',
+        type: 'get',
+        //data: "id="+id+"&clarity="+clarity+"&loadSpeed="+loadSpeed+"&quality="+quality,
+        cache: false,
+        success: function(data) {
+            location.href = '/gl/commentsInfo/AllComments.xlsx';
+            console.log("data = " + JSON.stringify(data));
+        },
+        error: function() {
+        }
+    });
+}
+
+//下载特定视频的comments
+function getVideoComments(id) {
+	$.ajax({
+        url: '/gl/movie/getVideoComments/'+id,
+        type: 'get',
+        //data: "id="+id+"&clarity="+clarity+"&loadSpeed="+loadSpeed+"&quality="+quality,
+        cache: false,
+        success: function(data) {
+            location.href = '/gl/commentsInfo/' + data.filename;
             console.log("data = " + JSON.stringify(data));
         },
         error: function() {

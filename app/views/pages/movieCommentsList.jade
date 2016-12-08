@@ -3,9 +3,17 @@ extends ../layoutGl.jade
 block content
     .row
           h2.darkbule Comments List of #{movie.title}
-          h4.darkbule
-            i.fa.fa-area-chart 
-            |&nbsp;Total&nbsp; <span style="color:red; font-weight: bold;">#{comments.length}</span> &nbsp;items
+          .form-group
+            .col-sm-2
+              h3
+                a.btn.btn-success(onclick="getVideoComments('#{movie._id}')") Download Comments
+
+          .form-group
+            .col-sm-12
+              legend
+                h4.darkbule
+                  i.fa.fa-area-chart 
+                  |&nbsp;Total<span style="color:red; font-weight: bold;">#{comments.length}</span>items
           table.table.table-hover.table-bordered
             thead
               tr
