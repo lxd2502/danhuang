@@ -13,14 +13,15 @@ module.exports = function(app){
 	app.get('/guestIndex/:cateId',Index.guestIndex)
 	app.get('/aboutus',Index.aboutus)
 	app.get('/movie/:id',Movie.detail)
-	app.get('/movie/comment/:id',Movie.showComment)
-	app.get('/movie/userInfo/:id',UserInfo.showUserInfo)
 	app.post('/movie/submitScore', Movie.submitScore)
 	app.post('/movie/submitUserInfo', UserInfo.submitUserInfo)
 	app.post('/movie/mvUpload', Movie.mvUpload)
 	app.post('/movie/baseMovieUpload', Movie.baseMovieUpload)
 	app.post('/movie/saveNetworkStatus', Movie.saveNetworkStatus)
 	app.post('/movie/uploadBaseMvStatus', Movie.uploadBaseMvStatus)
+
+	app.get('/movie/comment/:id',User.signinRequired, Movie.showComment)
+	app.get('/movie/userInfo/:id',User.signinRequired, UserInfo.showUserInfo)
 	
 	//work category gl
 	app.get('/gl/movieCate', User.signinRequired, MovieCate.cateList)
@@ -54,7 +55,9 @@ module.exports = function(app){
 	app.get('/gl/movie/analysisList/:path', User.signinRequired, Movie.analysisFileList)
 	app.get('/gl/movie/createVideosInfomation', User.signinRequired, Movie.createVideosInfomation)
 	app.get('/gl/movieInfos/:name',User.signinRequired, Movie.downloadVideosInfomation)
-	
+	app.get('/gl/movie/getVideoComments/:id', User.signinRequired, Comment.getVideoComments)
+	app.get('/gl/movie/getAllComments', User.signinRequired, Comment.getAllComments)
+	app.get('/gl/commentsInfo/:name',User.signinRequired, Comment.downloadComments)
 
 	// //user
 	app.get('/user/update/:id',User.signinRequired, User.update);
