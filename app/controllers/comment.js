@@ -203,7 +203,7 @@ exports.downloadComments = function(req,res){
  	if(stats.isFile()){
   		res.writeHead(200, {
    			'Content-Type': 'application/octet-stream',
-	   		'Content-Disposition': 'attachment; filename='+"videoComments.xlsx",
+	   		'Content-Disposition': 'attachment; filename=""',
 	   		'Content-Length': stats.size
 	  	});
 	  	fs.createReadStream(filePath).pipe(res);
