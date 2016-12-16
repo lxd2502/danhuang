@@ -5,40 +5,75 @@ var address = '';
 var browserType = '';
 var systemType = '';
 
+var playCount = 0;
+var pauseCount = 0;
+var fullOnCount = 0;
+var fullOffCount = 0;
+
 window.onload=submitUserInfo();
 
-video.onplay = function() {
-	if (!isPlay) {
+// video.onplay = function() {
+// 	if (!isPlay) {
+// 		isPlay = true;
+// 		video.pause();
+// 		// var square = new Sonic({
+ 
+// 		//     width: 100,
+// 		//     height: 100,
+		 
+// 		//     fillColor: '#000',
+		 
+// 		//     path: [
+// 		//         ['line', 10, 10, 90, 10],
+// 		//         ['line', 90, 10, 90, 90],
+// 		//         ['line', 90, 90, 10, 90],
+// 		//         ['line', 10, 90, 10, 10]
+// 		//     ]
+		 
+// 		// });
+		 
+// 		// square.play();
+		 
+// 		// document.body.appendChild(square.canvas);
+// 		var innerText = $('#ShowDelay')[0].innerText;
+// 		setTimeout("play()", innerText);
+// 	}
+	
+//     //alert("The video has started to play");
+// };
+
+$('video#video').bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', function(e) {
+    var state = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
+    // var event = state ? 'FullscreenOn' : 'FullscreenOff';
+    var event = state ? fullOnCount++ : fullOffCount++;
+    console.log('－－－ fullOnCount －－－－－－－－－－－－－－－－－－－－ ' + fullOnCount);
+    console.log('－－－ fullOffCount －－－－－－－－－－－－－－－－－－－ ' + fullOffCount);
+  
+});
+
+video.addEventListener('pause',function(){ 
+	pauseCount++; 
+    console.log('－－－ pauseCount －－－－－－－－－－－－－－－－－－－－ ' + pauseCount);
+});
+
+video.addEventListener('play',function(){  
+    if (!isPlay) {
 		isPlay = true;
 		video.pause();
-		// var square = new Sonic({
- 
-		//     width: 100,
-		//     height: 100,
-		 
-		//     fillColor: '#000',
-		 
-		//     path: [
-		//         ['line', 10, 10, 90, 10],
-		//         ['line', 90, 10, 90, 90],
-		//         ['line', 90, 90, 10, 90],
-		//         ['line', 10, 90, 10, 10]
-		//     ]
-		 
-		// });
-		 
-		// square.play();
-		 
-		// document.body.appendChild(square.canvas);
+
 		var innerText = $('#ShowDelay')[0].innerText;
 		setTimeout("play()", innerText);
+	} else {
+		playCount++;
 	}
 	
-    //alert("The video has started to play");
-};
+	console.log('－－－ playCount －－－－－－－－－－－－－－－－－－－－ ' + playCount);
+});
 
 //播放
-function play() { 
+function play() {
+	pauseCount = 0;
+	playCount = 0; 
  	video.play();
 }
 
@@ -268,7 +303,11 @@ function submitScore1(id, ip, address){
 		'ip': ip,
 		'address': address,
 		'currentTime': currentTime,
-		'bufferTime': bufferTime
+		'bufferTime': bufferTime,
+		'playCount': playCount,
+		'pauseCount': pauseCount,
+		'fullOnCount': fullOnCount,
+		'fullOffCount': fullOffCount
 	}
 	$.ajax({
         url: '/movie/submitScore',
@@ -403,7 +442,11 @@ function submitUserInfo1(id, ip, address){
 		'ip': ip,
 		'address': address,
 		'currentTime': currentTime,
-		'bufferTime': bufferTime
+		'bufferTime': bufferTime,
+		'playCount': playCount,
+		'pauseCount': pauseCount,
+		'fullOnCount': fullOnCount,
+		'fullOffCount': fullOffCount
 	}
 	$.ajax({
         url: '/movie/submitUserInfo',

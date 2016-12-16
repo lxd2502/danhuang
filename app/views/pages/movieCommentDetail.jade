@@ -49,6 +49,27 @@ block content
               .form-group
                 .col-sm-12
                   legend
+                h3.darkbule.col-sm-3.control-label(for="") User-Viewing Activities
+
+              .form-group.raw
+                h4.darkbule.col-sm-2.control-label(for="") Play Count
+                .col-sm-3
+                  input#inputMVPlay.form-control(readonly="readonly" type="text",name="network[playCount]",value="#{commentInfo.playCount}", placeholder="")           
+                h4.darkbule.col-sm-2.control-label(for="") Pause Count
+                .col-sm-3
+                  input#inputMVPause.form-control(readonly="readonly" type="text",name="network[pauseCount]",value="#{commentInfo.pauseCount}", placeholder="")
+
+              .form-group.raw
+                h4.darkbule.col-sm-2.control-label(for="") FullScreenOn
+                .col-sm-3
+                  input#inputMVFullScreenOn.form-control(readonly="readonly" type="text",name="network[fullOnCount][mvWidth]",value="#{commentInfo.fullOnCount}", placeholder="")           
+                h4.darkbule.col-sm-2.control-label(for="") FullScreenOff
+                .col-sm-3
+                  input#inputMVFullScreenOff.form-control(readonly="readonly" type="text",name="network[fullOffCount]",value="#{commentInfo.fullOffCount}", placeholder="")
+
+              .form-group
+                .col-sm-12
+                  legend
                 h3.darkbule.col-sm-5.control-label(for="inputBandwidth") Browser and System Information of User
 
               .form-group.raw

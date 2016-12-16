@@ -37,6 +37,10 @@ exports.getAllComments = function(req,res){
 	 	{caption:'ip',type:'string',width:15},
 	 	{caption:'address',type:'string',width:15},
 	 	{caption:'Commit Time', type:'string',width:30},
+	 	{caption:'playCount',type:'number',width:15},
+	 	{caption:'pauseCount',type:'number',width:15},
+	 	{caption:'fullOnCount',type:'number',width:15},
+	 	{caption:'fullOffCount',type:'number',width:15},
 	 	{caption:'screenWidth',type:'number',width:15},
 	 	{caption:'screenHeight',type:'number',width:15},
 	 	{caption:'color',type:'number',width:15},
@@ -71,23 +75,27 @@ exports.getAllComments = function(req,res){
 	 			temp_row[5] = comments[i].ip;
 	 			temp_row[6] = comments[i].address;
 	 			temp_row[7] = comments[i].meta.createAt.toString();
-	 			temp_row[8] = parseInt(comments[i].screenWidth);
-	 			temp_row[9] = parseInt(comments[i].screenHeight);
-	 			temp_row[10] = parseInt(comments[i].color);
-	 			temp_row[11] = parseInt(comments[i].pixel);
-	 			temp_row[12] = parseFloat(comments[i].currentTime);
-	 			temp_row[13] = parseFloat(comments[i].bufferTime);
-	 			temp_row[14] = comments[i].browserType;
-	 			temp_row[15] = "v"+comments[i].browserVersion.toString();
-	 			temp_row[16] = comments[i].userAgent;
-	 			temp_row[17] = comments[i].platform;
-	 			temp_row[18] = comments[i].systemType;
-	 			temp_row[19] = parseInt(comments[i].pluginsCount);
-	 			temp_row[20] = comments[i].plugins;
-	 			temp_row[21] = comments[i].userLanguage;
-	 			temp_row[22] = comments[i].cookieEnabled;
-	 			temp_row[23] = comments[i].javaEnabled;
-	 			temp_row[24] = comments[i].flash;
+	 			temp_row[8] = parseInt(comments[i].playCount);
+	 			temp_row[9] = parseInt(comments[i].pauseCount);
+	 			temp_row[10] = parseInt(comments[i].fullOnCount);
+	 			temp_row[11] = parseInt(comments[i].fullOffCount);
+	 			temp_row[12] = parseInt(comments[i].screenWidth);
+	 			temp_row[13] = parseInt(comments[i].screenHeight);
+	 			temp_row[14] = parseInt(comments[i].color);
+	 			temp_row[15] = parseInt(comments[i].pixel);
+	 			temp_row[16] = parseFloat(comments[i].currentTime);
+	 			temp_row[17] = parseFloat(comments[i].bufferTime);
+	 			temp_row[18] = comments[i].browserType;
+	 			temp_row[19] = "v"+comments[i].browserVersion.toString();
+	 			temp_row[20] = comments[i].userAgent;
+	 			temp_row[21] = comments[i].platform;
+	 			temp_row[22] = comments[i].systemType;
+	 			temp_row[23] = parseInt(comments[i].pluginsCount);
+	 			temp_row[24] = comments[i].plugins;
+	 			temp_row[25] = comments[i].userLanguage;
+	 			temp_row[26] = comments[i].cookieEnabled;
+	 			temp_row[27] = comments[i].javaEnabled;
+	 			temp_row[28] = comments[i].flash;
 	 			rows[i] = temp_row;
 	 		}
 
@@ -119,6 +127,10 @@ exports.getVideoComments = function(req,res){
 	 	{caption:'ip',type:'string',width:15},
 	 	{caption:'address',type:'string',width:15},
 	 	{caption:'Commit Time', type:'string',width:30},
+	 	{caption:'playCount',type:'number',width:15},
+	 	{caption:'pauseCount',type:'number',width:15},
+	 	{caption:'fullOnCount',type:'number',width:15},
+	 	{caption:'fullOffCount',type:'number',width:15},
 	 	{caption:'screenWidth',type:'number',width:15},
 	 	{caption:'screenHeight',type:'number',width:15},
 	 	{caption:'color',type:'number',width:15},
@@ -153,23 +165,27 @@ exports.getVideoComments = function(req,res){
 	 			temp_row[5] = comments[i].ip;
 	 			temp_row[6] = comments[i].address;
 	 			temp_row[7] = comments[i].meta.createAt.toString();
-	 			temp_row[8] = parseInt(comments[i].screenWidth);
-	 			temp_row[9] = parseInt(comments[i].screenHeight);
-	 			temp_row[10] = parseInt(comments[i].color);
-	 			temp_row[11] = parseInt(comments[i].pixel);
-	 			temp_row[12] = parseFloat(comments[i].currentTime);
-	 			temp_row[13] = parseFloat(comments[i].bufferTime);
-	 			temp_row[14] = comments[i].browserType;
-	 			temp_row[15] = "v"+comments[i].browserVersion.toString();
-	 			temp_row[16] = comments[i].userAgent;
-	 			temp_row[17] = comments[i].platform;
-	 			temp_row[18] = comments[i].systemType;
-	 			temp_row[19] = parseInt(comments[i].pluginsCount);
-	 			temp_row[20] = comments[i].plugins;
-	 			temp_row[21] = comments[i].userLanguage;
-	 			temp_row[22] = comments[i].cookieEnabled;
-	 			temp_row[23] = comments[i].javaEnabled;
-	 			temp_row[24] = comments[i].flash;
+	 			temp_row[8] = parseInt(comments[i].playCount);
+	 			temp_row[9] = parseInt(comments[i].pauseCount);
+	 			temp_row[10] = parseInt(comments[i].fullOnCount);
+	 			temp_row[11] = parseInt(comments[i].fullOffCount);
+	 			temp_row[12] = parseInt(comments[i].screenWidth);
+	 			temp_row[13] = parseInt(comments[i].screenHeight);
+	 			temp_row[14] = parseInt(comments[i].color);
+	 			temp_row[15] = parseInt(comments[i].pixel);
+	 			temp_row[16] = parseFloat(comments[i].currentTime);
+	 			temp_row[17] = parseFloat(comments[i].bufferTime);
+	 			temp_row[18] = comments[i].browserType;
+	 			temp_row[19] = "v"+comments[i].browserVersion.toString();
+	 			temp_row[20] = comments[i].userAgent;
+	 			temp_row[21] = comments[i].platform;
+	 			temp_row[22] = comments[i].systemType;
+	 			temp_row[23] = parseInt(comments[i].pluginsCount);
+	 			temp_row[24] = comments[i].plugins;
+	 			temp_row[25] = comments[i].userLanguage;
+	 			temp_row[26] = comments[i].cookieEnabled;
+	 			temp_row[27] = comments[i].javaEnabled;
+	 			temp_row[28] = comments[i].flash;
 	 			rows[i] = temp_row;
 	 		}
 

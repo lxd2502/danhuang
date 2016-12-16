@@ -31,6 +31,10 @@ var UserInfoSchema = new Schema({
 	address: { type:String, default:""},
 	currentTime: { type:String, default:""},
 	bufferTime: { type:String, default:""},
+	playCount: { type:String, default:""},
+	pauseCount: { type:String, default:""},
+	fullOnCount: { type:String, default:""},
+	fullOffCount: { type:String, default:""},
 
 	meta:{
 		createAt:{

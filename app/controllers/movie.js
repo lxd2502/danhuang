@@ -484,6 +484,10 @@ exports.submitScore = function(req,res){
 	var address = req.body.address;
 	var currentTime = req.body.currentTime;
 	var bufferTime = req.body.bufferTime;
+	var playCount = req.body.playCount;
+	var pauseCount = req.body.pauseCount;
+	var fullOnCount = req.body.fullOnCount;
+	var fullOffCount = req.body.fullOffCount;
 	
 	// if(clarity == 0 || loadSpeed == 0 || quality == 0){
 	// 	res.json({result : 0});
@@ -515,8 +519,14 @@ exports.submitScore = function(req,res){
 			ip: ip,
 			address: address,
 			currentTime: currentTime,
-			bufferTime: bufferTime
+			bufferTime: bufferTime,
+			playCount: playCount,
+			pauseCount: pauseCount,
+			fullOnCount: fullOnCount,
+			fullOffCount: fullOffCount
 		})
+
+		console.log("new _Comment : " + JSON.stringify(_Comment));
 
 		_Comment.save(function(err,comment){
 			console.log("id2 = " + id);

@@ -76,6 +76,10 @@ exports.submitUserInfo = function(req,res){
 	var address = req.body.address;
 	var currentTime = req.body.currentTime;
 	var bufferTime = req.body.bufferTime;
+	var playCount = req.body.playCount;
+	var pauseCount = req.body.pauseCount;
+	var fullOnCount = req.body.fullOnCount;
+	var fullOffCount = req.body.fullOffCount;
 	
 	console.log("id = " + id);
 	if(id){
@@ -100,7 +104,11 @@ exports.submitUserInfo = function(req,res){
 			ip: ip,
 			address: address,
 			currentTime: currentTime,
-			bufferTime: bufferTime
+			bufferTime: bufferTime,
+			playCount: playCount,
+			pauseCount: pauseCount,
+			fullOnCount: fullOnCount,
+			fullOffCount: fullOffCount
 		})
 
 		_userInfo.save(function(err,userInfo){
