@@ -3,24 +3,6 @@ extends ../guestLayout.jade
 
 block content
 		div.wrapper.row-offcanvas-left.page1
-			aside.left-side.sidebar-offcanvas(style="top:0;background-color:#f9f9f9;")
-				section.sidebar
-					//- img(src="/img/buptlogo1.png",alt="404-img")
-					div.user-panel(style='padding: 0 0 0 85px;background-color:#009999')
-						h2 Welcome
-					ul.sidebar-menu(style="background:#555") 
-						li.typeli(style="border-bottom:0.5px solid #ccc;")
-								a.typelist(href="/guestIndex")
-									i.fa.fa-film
-									span Recommendation
-									small.badge.pull-right.bg-green 20
-						each cat in mCates
-							li.typeli(style="border-bottom:0.5px solid #ccc;")
-								a.typelist(href="/guestIndex/#{cat._id}")
-									i.fa.fa-film
-									span #{cat.title}
-									small.badge.pull-right.bg-green #{cat.movies.length}
-					//- <script type="text/javascript" id="clustrmaps" src="//cdn.clustrmaps.com/map_v2.js?d=nh7_0GWo-H37cENRlmxznWJTgsL01BTsKkJMcAzETz4&cl=ffffff&w=a"></script>
 			aside.right-side
 				section.content-header
 					h1.darkbule
@@ -53,6 +35,23 @@ block content
 															//- a.small-box-footer(href="/movie/#{mv.id}")
 															//- 	More please score for the v
 															//- 	i.fa.fa-arrow-circle-right
-				script(type="text/javascript" id="clustrmaps" src="//cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=270&d=__oFJE5DixVqmxdzdvBtcfivAbhhll7ubpT1UevP0Uk")
+			aside.left-side.sidebar-offcanvas(style="top:0;background-color:#f9f9f9;")
+				section.sidebar
+					//- img(src="/img/buptlogo1.png",alt="404-img")
+					div.user-panel(style='padding: 0 0 0 85px;background-color:#009999')
+						h2 Welcome
+					ul.sidebar-menu(style="background:#555") 
+						li.typeli(style="border-bottom:0.5px solid #ccc;")
+								a.typelist(href="/guestIndex")
+									i.fa.fa-film
+									span Recommendation
+									small.badge.pull-right.bg-green 20
+						each cat in mCates
+							li.typeli(style="border-bottom:0.5px solid #ccc;")
+								a.typelist(href="/guestIndex/#{cat._id}")
+									i.fa.fa-film
+									span #{cat.title}
+									small.badge.pull-right.bg-green #{cat.movies.length}
+					script(type="text/javascript" id="clustrmaps" src="//cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=a&d=AtwnonysoTwsiXaU6lBxuvsG4D1K7CayC2po0LDMmj0")
 
 
