@@ -103,6 +103,14 @@ h6 {
     border-bottom: 1px solid #e7e7e7;
 }
 
+.content-section-c {
+    padding: 0px 0;
+    background-color:#000000;
+    filter:alpha(opacity=50); 
+    -moz-opacity:0.5; 
+    opacity:0.5;
+}
+
 .section-heading {
     margin-bottom: 30px;
 }

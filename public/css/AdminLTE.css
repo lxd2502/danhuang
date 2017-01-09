@@ -49,6 +49,24 @@ body > .header {
   right: 0;
   z-index: 1030;
 }
+
+.right-side1,
+.left-side1 {
+  min-height: 100%;
+  display: block;
+}
+/*right side - contins main content*/
+.right-side1 {
+  background-color: #f9f9f9;
+  margin-left: 45%;
+}
+/*left side - contains sidebar*/
+.left-side1 {
+  position: absolute;
+  width: 45%;
+  top: 0;
+}
+
 /* Define 2 column template */
 .right-side,
 .left-side {
