@@ -27,8 +27,13 @@ exports.index = function(req,res){
 }
 
 exports.aboutus = function(req,res){
-	console.log("-----contr/index.js--- index function")
+	console.log("-----contr/index.js--- aboutus function")
 	res.render('aboutus');
+}
+
+exports.moreabout = function(req,res){
+	console.log("-----contr/index.js--- moreabout function")
+	res.render('moreAbout');
 }
 
 exports.guestIndex = function(req,res){

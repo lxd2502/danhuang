@@ -12,6 +12,7 @@ module.exports = function(app){
 	app.get('/guestIndex',Index.guestIndex)
 	app.get('/guestIndex/:cateId',Index.guestIndex)
 	app.get('/aboutus',Index.aboutus)
+	app.get('/moreabout',Index.moreabout)
 	app.get('/movie/:id',Movie.detail)
 	app.post('/movie/submitScore', Movie.submitScore)
 	app.post('/movie/submitUserInfo', UserInfo.submitUserInfo)
