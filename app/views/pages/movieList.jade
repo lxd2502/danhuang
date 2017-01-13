@@ -6,15 +6,15 @@ block content
           h2.darkbule Video List
 
           .form-group
-            .col-sm-1
-              h3
+            div
+              h3(style="float:left;")
                 a.btn.btn-success(href="/gl/movie/add") New Video
-            .col-sm-2
-              h3
-                a.btn.btn-success(onclick="createVideosInfomation()") Download Infomation of Videos
-            //- a.btn.btn-success(href="/gl/setNetwork", style="margin-left: 15px;")
-            //-   span.fa.fa-cog(aria-hidden="true")
-            //-   | 设置网络参数
+            
+              h3(style="float:left;margin-left: 20px;")
+                a.btn.btn-success(onclick="createVideosInfomation()") Download Informations of Video
+
+              h3(style="float:left;margin-left: 20px;")
+                a.btn.btn-success(onclick="getAllComments()") Download All Comments
           .form-group
             .col-sm-12
               legend
@@ -51,6 +51,22 @@ block content
                    //- td: a.btn.btn-info(target="_blank",href="../movie/comment/#{item._id}") Comments
                    td: a.btn.btn-primary(target="_blank",href="/gl/movie/setparams/#{item._id}") Parameter settings
                    td: button.btn.btn-danger.del(type="button",data-id="#{item._id}") Delete
+
+          table.table.table-hover.table-bordered(style="table-layout:fixed")
+            thead
+              tr
+                th(style="width:350px;white-space:nowrap;overflow:hidden; text-overflow:ellipsis;") Name
+                th Viewers
+                th Name
+                th Viewers
+            tbody
+              tr
+                td(style="width:300px;white-space:nowrap;overflow:hidden; text-overflow:ellipsis;") home page
+                td 
+                  a(target="_blank",href="/page/userInfo/0" style="text-decoration: underline") #{homeUsers}
+                td(style="width:300px;white-space:nowrap;overflow:hidden; text-overflow:ellipsis;") video list page
+                td 
+                  a(target="_blank",href="/page/userInfo/1" style="text-decoration: underline") #{listUsers}        
 
           script(src="/js/movie.js")
 

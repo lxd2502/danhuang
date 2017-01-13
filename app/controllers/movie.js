@@ -14,6 +14,7 @@ var moment = require('moment');
 var glob = require('glob');
 var nodeExcel = require('excel-export');
 var UserInfo = require("../models/userInfo");
+var UserInfoNoVideo = require("../models/userInfoPage");
 
 var _ = require('underscore');
 
@@ -82,14 +83,31 @@ exports.list = function(req,res){
 
 		// console.log("moviesList = " + JSON.stringify(Movies));
 		MovieCate.fetch(function(err,cates){
-			if(err){console.log(err)}	
-				res.render('movieList',{
-				movies:Movies,
-				cates:cates,
-				totalViews:totalViews,
-				totalComments:totalComments,
-				pv1:pv1
+			if(err){console.log(err)}
+			UserInfoNoVideo.findByHomePage(function(err,homeUsers){
+				if(err){console.log(err)};
+				console.log("----homeUsers : " + JSON.stringify(homeUsers));
+				UserInfoNoVideo.findByListPage(function(err,listUsers){
+					console.log("----listUsers : " + JSON.stringify(listUsers));
+					res.render('movieList',{
+						movies:Movies,
+						cates:cates,
+						totalViews:totalViews,
+						totalComments:totalComments,
+						pv1:pv1,
+						homeUsers:homeUsers.length,
+						listUsers:listUsers.length
+					});
+				});
 			});
+			// if(err){console.log(err)}	
+			// res.render('movieList',{
+			// 	movies:Movies,
+			// 	cates:cates,
+			// 	totalViews:totalViews,
+			// 	totalComments:totalComments,
+			// 	pv1:pv1
+			// });
 		})
 		
 	})

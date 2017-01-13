@@ -2,6 +2,7 @@ var Index = require('../app/controllers/index')
 var MovieCate = require('../app/controllers/movieCate')
 var Movie = require('../app/controllers/movie')
 var UserInfo = require('../app/controllers/userInfo')
+var UserInfoNoVideo = require('../app/controllers/userInfoPage')
 var User = require('../app/controllers/user')
 var Comment = require('../app/controllers/comment')
 
@@ -23,6 +24,10 @@ module.exports = function(app){
 
 	app.get('/movie/comment/:id',User.signinRequired, Movie.showComment)
 	app.get('/movie/userInfo/:id',User.signinRequired, UserInfo.showUserInfo)
+
+	app.post('/homepage/submitUserInfo', UserInfoNoVideo.submitUserInfo)
+	app.get('/page/userInfo/:id',User.signinRequired, UserInfoNoVideo.showUserInfo)
+	app.get('/page/userInfo/detail/:infoId', User.signinRequired,UserInfoNoVideo.userInfoDetail)
 	
 	//work category gl
 	app.get('/gl/movieCate', User.signinRequired, MovieCate.cateList)

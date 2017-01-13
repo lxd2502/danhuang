@@ -43,7 +43,7 @@ function getAllComments() {
         //data: "id="+id+"&clarity="+clarity+"&loadSpeed="+loadSpeed+"&quality="+quality,
         cache: false,
         success: function(data) {
-            location.href = '/gl/commentsInfo/AllComments.xlsx';
+            location.href = '/gl/commentsInfo/' + data.filename;;
             console.log("data = " + JSON.stringify(data));
         },
         error: function() {

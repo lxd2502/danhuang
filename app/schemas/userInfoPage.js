@@ -1,13 +1,11 @@
-// 存储访问视频详情页用户信息，与对应视频绑定
+// 存储访问首页或者视频列表页的用户的信息，没有视频与之绑定，默认pageid＝0，首页； pageid＝1，视频列表页
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema
 var ObjectId = Schema.Types.ObjectId
 
-var UserInfoSchema = new Schema({
-	movie:[{
-		type:ObjectId,
-		ref:'Movie'}
-	],
+var UserInfoNoVideoSchema = new Schema({
+	pageid:{type:String,default:"0"},
+	pagename : { type:String, default:"home page" },
 	clarity: { type:String, default:"0" },
 	loadSpeed: { type:String, default:"0" },
 	quality: { type:String, default:"0" },
@@ -49,7 +47,7 @@ var UserInfoSchema = new Schema({
 	}
 })
 
-UserInfoSchema.pre('save',function(next){
+UserInfoNoVideoSchema.pre('save',function(next){
 	if(this.isNew){
 		this.meta.createAt = this.meta.updateAt = Date.now();
 	}else{
@@ -58,7 +56,7 @@ UserInfoSchema.pre('save',function(next){
 	next();
 })
 
-UserInfoSchema.statics = {
+UserInfoNoVideoSchema.statics = {
 	fetch:function(cb){
 		return this
 			.find({})
@@ -69,10 +67,18 @@ UserInfoSchema.statics = {
 		return this.findOne({_id:id})
 			.exec(cb)
 	},
-	findByMovieId:function(movieId,cb){
-		return this.find({movie : movieId})
+	findByPageId:function(id,cb){
+		return this.find({pageid : id})
 			.exec(cb)
-	}
+	},
+	findByHomePage:function(cb){
+		return this.find({pageid : "0"})
+			.exec(cb)
+	},
+	findByListPage:function(cb){
+		return this.find({pageid : "1"})
+			.exec(cb)
+	},
 }
 
-module.exports = UserInfoSchema;
+module.exports = UserInfoNoVideoSchema;
