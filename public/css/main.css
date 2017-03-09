@@ -56,6 +56,17 @@ a{
 		    transition: color 0.1s linear 0s;
 }
 
+.email-white{
+	color:#FFFFFF;
+	text-decoration: none;
+	cursor: pointer;
+	
+	-webkit-transition: color 0.1s linear 0s;	
+	   -moz-transition: color 0.1s linear 0s;
+		 -o-transition: color 0.1s linear 0s;
+		    transition: color 0.1s linear 0s;
+}
+
 .typelist{
 	color:#FFFFFF;
 	text-decoration: none;
