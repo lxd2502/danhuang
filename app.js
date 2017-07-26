@@ -10,7 +10,7 @@ var compression = require('compression');
 var schedule = require("node-schedule");
 //var crawler = require("./app/controllers/crawler.js");
 
-var dbUrl = 'mongodb://root:beiyou910526@localhost:29019/dongdong';
+var dbUrl = 'mongodb://root:passW0rd_root@localhost:29019/dongdong';
 mongoose.connect(dbUrl);
 
 var app = express();	//start view
