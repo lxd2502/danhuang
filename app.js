@@ -9,6 +9,13 @@ var cookieParser = require('cookie-parser');
 var compression = require('compression');
 var schedule = require("node-schedule");
 //var crawler = require("./app/controllers/crawler.js");
+var https = require('https')
+var fs = require('fs')
+var options = {
+	key: fs.readFileSync('./app/214192511000713.key'),
+	cert: fs.readFileSync('./app/214192511000713.pem')
+}
+
 
 var dbUrl = 'mongodb://root:passW0rd_root@localhost:29019/dongdong';
 mongoose.connect(dbUrl);
@@ -32,5 +39,7 @@ app.locals.moment = require('moment')
 app.use(express.static(path.join(__dirname,'public'),{maxAge:7*24*60*60*1000}));
 require('./config/routes.js')(app);
 app.listen(port);
-console.log("-----app.js----- server started on port : "+port );
+console.log("-----app.js-----http server started on port : "+port );
+https.createServer(options, app).listen(443);
+console.log("-----app.js-----https server started on port : 443");
 
