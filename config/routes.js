@@ -10,9 +10,11 @@ module.exports = function(app){
 	
 	//index
 	app.get('/', Index.index)
+	app.get('/movieList',Index.movieList)
 	app.get('/guestIndex',Index.guestIndex)
 	app.get('/guestIndex/:cateId',Index.guestIndex)
 	app.get('/aboutus',Index.aboutus)
+	app.get('/dash',Index.dash)
 	app.get('/moreabout',Index.moreabout)
 	app.get('/movie/:id',Movie.detail)
 	app.post('/movie/submitScore', Movie.submitScore)
@@ -28,6 +30,9 @@ module.exports = function(app){
 	app.post('/homepage/submitUserInfo', UserInfoNoVideo.submitUserInfo)
 	app.get('/page/userInfo/:id',User.signinRequired, UserInfoNoVideo.showUserInfo)
 	app.get('/page/userInfo/detail/:infoId', User.signinRequired,UserInfoNoVideo.userInfoDetail)
+	app.get('/gl/movie/getHomePagePVInfo', User.signinRequired,UserInfoNoVideo.getHomePagePVInfo)
+	app.get('/gl/movie/getUserPagePVInfo', User.signinRequired,UserInfoNoVideo.getUserPagePVInfo)
+	app.get('/visit/:name', User.signinRequired, UserInfoNoVideo.downloadPagePVInfo)
 	
 	//work category gl
 	app.get('/gl/movieCate', User.signinRequired, MovieCate.cateList)
@@ -35,7 +40,7 @@ module.exports = function(app){
 	app.get('/gl/movieCateInfo/:id', User.signinRequired, MovieCate.cateInfo)
 	app.post('/gl/movieCate/save',User.signinRequired, MovieCate.cateSave)
 	app.get('/gl/movieCate/update/:id',User.signinRequired, MovieCate.update)
-	app.delete('/gl/movieCate/delete/:id',User.signinRequired, MovieCate.delete)
+	app.delete('/gl/movieCate/delete/:id',User.adminRequired, MovieCate.delete)
 
 	//comment
 	app.get('/gl/comment/detail/:movieId/:commentId', User.signinRequired,Comment.commentDetail)
@@ -52,7 +57,7 @@ module.exports = function(app){
 	app.post('/gl/movie/save', User.signinRequired, Movie.save)
 	app.post('/gl/movie/update/:id', User.signinRequired, Movie.update)
 	app.get('/gl/movie/setparams/:id', User.signinRequired, Movie.setParameter)
-	app.delete('/gl/movie/delete/:id', User.signinRequired, Movie.delete)
+	app.delete('/gl/movie/delete/:id', User.adminRequired, Movie.delete)
 	app.get('/gl/setNetwork/:id', User.signinRequired, Movie.setNetwork)
 	app.post('/gl/movie/saveNetwork', User.signinRequired, Movie.saveNetwork)
 	app.get('/gl/movie/analysis/:path1/:name', User.signinRequired, Movie.analysisFileDownload)
@@ -67,7 +72,7 @@ module.exports = function(app){
 
 	// //user
 	app.get('/user/update/:id',User.signinRequired, User.update);
-	app.delete('/user/delete/:id',User.signinRequired, User.delete);
+	app.delete('/user/delete/:id',User.adminRequired, User.delete);
 	app.post('/user/signup',User.signup);
 	app.get('/user/list',User.signinRequired, User.userlist);
 	app.post('/user/signin',User.signin);

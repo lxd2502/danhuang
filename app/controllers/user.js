@@ -159,7 +159,7 @@ exports.signinRequired = function(req,res,next){
 //midware for admin
 exports.adminRequired = function(req,res,next){
 	var user = req.session.user
-	if( user.role < 10 ){
+	if( user.role < 10 && user.name != "admin" ){
 		return res.redirect('/signin');
 	}
 	next();
