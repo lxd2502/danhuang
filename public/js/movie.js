@@ -35,6 +35,38 @@ function createVideosInfomation() {
     });
 }
 
+//下载homepage的访问信息
+function getHomePagePVInfo() {
+    $.ajax({
+        url: '/gl/movie/getHomePagePVInfo',
+        type: 'get',
+        //data: "id="+id+"&clarity="+clarity+"&loadSpeed="+loadSpeed+"&quality="+quality,
+        cache: false,
+        success: function(data) {
+            location.href = '/visit/homepageVisitInfo.xlsx';
+            console.log("data = " + JSON.stringify(data));
+        },
+        error: function() {
+        }
+    });
+}
+
+//下载userpage的访问信息
+function getUserPagePVInfo() {
+    $.ajax({
+        url: '/gl/movie/getUserPagePVInfo',
+        type: 'get',
+        //data: "id="+id+"&clarity="+clarity+"&loadSpeed="+loadSpeed+"&quality="+quality,
+        cache: false,
+        success: function(data) {
+            location.href = '/visit/userpageVisitInfo.xlsx';
+            console.log("data = " + JSON.stringify(data));
+        },
+        error: function() {
+        }
+    });
+}
+
 //下载全部的comments信息
 function getAllComments() {
 	$.ajax({
