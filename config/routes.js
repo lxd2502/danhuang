@@ -5,6 +5,7 @@ var UserInfo = require('../app/controllers/userInfo')
 var UserInfoNoVideo = require('../app/controllers/userInfoPage')
 var User = require('../app/controllers/user')
 var Comment = require('../app/controllers/comment')
+var Dash = require('../app/controllers/dash')
 
 module.exports = function(app){
 	
@@ -69,6 +70,17 @@ module.exports = function(app){
 	app.get('/gl/movie/getVideoComments/:id', User.signinRequired, Comment.getVideoComments)
 	app.get('/gl/movie/getAllComments', User.signinRequired, Comment.getAllComments)
 	app.get('/gl/commentsInfo/:name',User.signinRequired, Comment.downloadComments)
+
+	//dash
+	app.get('/gl/dash', User.signinRequired, Dash.list)
+	app.get('/gl/dash/add', User.signinRequired, Dash.add)
+	app.post('/gl/dash/mvUpload', Dash.mvUpload)
+	app.post('/gl/dash/uploadBaseMvStatus', Dash.uploadBaseMvStatus)
+	app.post('/gl/dash/save', User.signinRequired, Dash.save)
+	app.delete('/gl/dash/delete/:id', User.signinRequired, Dash.delete)
+	app.get('/gl/dash/setparams/:id', User.signinRequired, Dash.setParameter)
+	app.post('/gl/dash/saveNetworkStatus', Dash.saveNetworkStatus)
+	app.post('/gl/dash/saveNetwork', User.signinRequired, Dash.saveNetwork)
 
 	// //user
 	app.get('/user/update/:id',User.signinRequired, User.update);
