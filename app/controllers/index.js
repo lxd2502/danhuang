@@ -31,6 +31,12 @@ exports.aboutus = function(req,res){
 	res.render('aboutus');
 }
 
+// dash test
+exports.dash = function(req,res){
+	console.log("-----contr/index.js--- aboutus function")
+	res.render('dash');
+}
+
 exports.moreabout = function(req,res){
 	console.log("-----contr/index.js--- moreabout function")
 	res.render('moreAbout');
@@ -49,7 +55,7 @@ exports.guestIndex = function(req,res){
 		console.log("movies which are cateId = " + cateId);
 		MovieCate.fetch(function(err,mCates){
 			if(err){
-				coonsole.log(err);
+				console.log(err);
 			}
 			Movie.findByCateId(cateId, function(err, movies){
 				res.render('guestIndex',{
@@ -62,7 +68,7 @@ exports.guestIndex = function(req,res){
 		console.log("all movies");
 		Movie.fetch(function(err,movies){
 			if(err){
-				coonsole.log(err);
+				console.log(err);
 			}
 			var temp_movies = [], indexs = [], x = 0;
 
@@ -92,6 +98,19 @@ exports.guestIndex = function(req,res){
 		})
 	}
 
+	
+}
+
+exports.movieList = function(req,res){
+	console.log("-----contr/movieList.js--- movieList function")
+
+	console.log("all movies");
+	Movie.fetch(function(err,movies){
+		if(err){
+			console.log(err);
+		}
+		res.end(JSON.stringify(movies));
+	})
 	
 }
 

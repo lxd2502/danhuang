@@ -15,6 +15,15 @@ exports.cateList = function(req,res){
 			coonsole.log(err);
 		}
 		console.log(JSON.stringify(movieCates));
+
+		for (var i = movieCates.length - 1; i >= 0; i--) {
+			if (movieCates[i].title == "DASH") {
+				// movieCates.remove(i);
+				movieCates.splice(i,1);
+				break;
+			}
+		}
+
 		res.render('movieCateList',{
 			movieCates: movieCates
 		});

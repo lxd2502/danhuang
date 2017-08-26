@@ -47,6 +47,10 @@ MovieCateSchema.statics = {
 	findById:function(id,cb){
 		return this.findOne({_id:id})
 			.exec(cb)
+	},
+	findByTitle:function(title,cb){
+		return this.findOne({title : title})
+			.exec(cb)
 	}
 }
 
