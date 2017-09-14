@@ -79,8 +79,10 @@ module.exports = function(app){
 	app.post('/gl/dash/save', User.signinRequired, Dash.save)
 	app.delete('/gl/dash/delete/:id', User.signinRequired, Dash.delete)
 	app.get('/gl/dash/setparams/:id', User.signinRequired, Dash.setParameter)
+	app.get('/gl/dash/setDashParams/:id', User.signinRequired, Dash.setDashParameter)
 	app.post('/gl/dash/saveNetworkStatus', Dash.saveNetworkStatus)
 	app.post('/gl/dash/saveNetwork', User.signinRequired, Dash.saveNetwork)
+	app.post('/gl/dash/saveDashParameter', User.signinRequired, Dash.saveDashParameter)
 
 	// //user
 	app.get('/user/update/:id',User.signinRequired, User.update);

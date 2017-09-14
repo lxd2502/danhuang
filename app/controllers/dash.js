@@ -90,6 +90,33 @@ exports.uploadBaseMvStatus = function(req,res){
 	res.json({status : upBaseMvNum, msg : upBaseMvMsg});
 }
 
+exports.saveDashParameter = function(req, res) {
+	console.log("-----contr/dash.js--- saveDashParameter function")
+	var movieObj = req.body.movie;
+	var dashParams = req.body.dashParams;
+	var netObj = req.body.network;
+	console.log("movieObj \n" + JSON.stringify(movieObj));
+	console.log("dashParams \n" + JSON.stringify(dashParams));
+	console.log("netObj \n" + JSON.stringify(netObj));
+
+	MovieCate.findByTitle("DASH",function(err, MovieCate){
+		if(err){console.log(err);}
+		// console.log("----MovieCate : " + JSON.stringify(MovieCate));
+		
+		if (MovieCate) {
+			 // 获取DASH视频
+			Movie.findByCateId(MovieCate._id, function(err, movies){
+				if(err){console.log(err);}
+				// console.log("----movies : " + JSON.stringify(movies));
+				
+				res.render('dashVideosList',{
+					movies:movies
+				});
+			});
+		}
+	});
+}
+
 exports.mvUpload = function(req, res){
 	console.log("-----contr/Movie.js--- mvUpload function")
   	var message = '';
@@ -421,7 +448,7 @@ exports.save = function(req,res){
 }
 
 exports.setParameter = function(req,res){
-	console.log("-----contr/Movie.js--- update function")
+	console.log("-----contr/dash.js--- setParameter function")
 	var oid = req.params.id;
 
 	Movie.findById(oid,function(err,Movie){
@@ -469,6 +496,65 @@ exports.setParameter = function(req,res){
 					}
 
 					res.render('setDashNetwork',{
+						movie: Movie,
+						mCates: mCates,
+						network : network
+					});
+				});
+			});
+		}
+	});
+}
+
+exports.setDashParameter = function(req,res){
+	console.log("-----contr/dash.js--- setDashParameter function")
+	var oid = req.params.id;
+
+	Movie.findById(oid,function(err,Movie){
+		if(err){
+			console.log(err);
+			res.render('404',{});
+		}
+		else{
+			console.log("movie content : " + JSON.stringify(Movie));
+			if(Movie.content){
+				Movie.content = mark(Movie.content)
+			}
+			MovieCate.findById(Movie.movieCates,function(err,mCates){
+				console.log("mCates : " + mCates);
+				if(err){console.log(err)}
+				Network.fetch(function(err,Networks){
+					if(err){
+						console.log(err);
+					}
+
+					var fps = Movie.fps;
+					if (fps.indexOf("fps")>0) {
+						fps = fps.substring(0, fps.indexOf("fps"));
+						Movie.fps = fps;
+					}
+
+					var bps = Movie.bps;
+					if (bps.indexOf("kbps")>0) {
+						bps = bps.substring(0, bps.indexOf("kbps"));
+						Movie.bps = bps;
+					}
+
+					console.log("movie info ----\n Movie : " + JSON.stringify(Movie));
+
+				 	var network = Networks[0];
+					network = {
+						bandwidth: "",
+						timedelay: "",
+						packetloss: "",
+						mvWidth: Movie.width,//mvInfo['streams'][0]['width'],
+						mvHeight: Movie.height,//mvInfo['streams'][0]['height'],
+						fps: Movie.fps,
+						bps: Movie.bps,//Math.round(mvInfo['streams'][0]['bit_rate']/1000),
+						unsharp: "1",
+					}
+
+					res.render('setDashParameter',{
 						movie: Movie,
 						mCates: mCates,
 						network : network
@@ -853,7 +939,7 @@ exports.setNetwork = function(req,res){
 
 
 exports.saveNetwork = function(req,res){
-	console.log("-----contr/Movie.js--- saveNetwork function")
+	console.log("-----contr/dash.js--- saveNetwork function")
 
 	var movieObj = req.body.movie;
 	var cateObj = req.body.mCates;
@@ -869,7 +955,6 @@ exports.saveNetwork = function(req,res){
 			if(err) { 
 				console.log(err); 
 			}
-			//saveNetEvent.emit("NetWorkSave", "25%");
 			saveNetNum = "20%";
 			saveNetMsg = "setting network parameters...";
 			console.log(JSON.stringify(movieInfo));
@@ -903,7 +988,7 @@ exports.saveNetwork = function(req,res){
 					}
 
 					if (!(netObj.bandwidth > 0) && !(netObj.timedelay > 0) && !infoChanged){
-						res.redirect('/gl/Movie');
+						res.redirect('/gl/dash');
 						return;
 					}
 
@@ -934,7 +1019,7 @@ function netAndMovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, n
 	var targetMovie, targetMovie1;
 	var newPic;
 
-	console.log("---------netAndMovieInfoChanged------------");
+	console.log("-----dash----netAndMovieInfoChanged------------");
 	newDir = mkdirNewPath();
 	currentPath = processor.cwd() + "/public/movie/";
 	newPath = currentPath + newDir;
@@ -1070,96 +1155,69 @@ function netAndMovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, n
 		console.log("maxTi : " + maxTi);
 		console.log("maxSi : " + maxSi);
 
-		//获取新视频的视频信息
-		MovieCate.fetch(function(err, cates){
+		//获取DASH Type对应的id
+		MovieCate.findByTitle("DASH",function(err, MovieCate){
 			saveNetNum = "90%";
 			saveNetNum = "computing eDistance value......";
-			console.log("cates = " + JSON.stringify(cates));
-			var tiArr = [];
-			var siArr = [];
-			var catesIds = [];
-			var ret = [];
-			var x = 0, y = 0; 
+			if(err){console.log(err);}
+			console.log("----MovieCate : " + JSON.stringify(MovieCate));
 
-			for(var i = 0, len = cates.length; i < len; i++){
-				TISI.findByCateId(cates[i]._id, function(err, tisis){
-					tiArr[x] = [];
-					siArr[x] = [];
-					if (tisis.length > 0) {
-						catesIds[x] = tisis[0].movieCates;
-					} else {
-						catesIds[x] = 0;
+			if (MovieCate) {
+				var resultTypeId = MovieCate._id;
+				var infopath = currentPath + "/" + newMovie;
+				var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
+
+				child_process.exec(infocmd, function(error, stdout, stderr) {
+					if (error !== null) {
+						console.log('exec error: ' + error);
 					}
+					var mvInfo = JSON.parse(stdout);
+					var fps="";
+					var arr = new Array();
+				    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
+				    if (arr.length>0) {
+				    	fps = arr[0];
+				    }
+
+					newMovieObj = new Movie({
+						title:movieObj.title,
+						content:movieObj.content,
+						ti:maxTi,
+						si:maxSi,
+						edistance:"",
+						movieCates:resultTypeId,
+						pic: newPic,
+						movie: newMovie,
+						dir : newDir,
+						showdelay: movieObj.showdelay,
+						duration: mvInfo['streams'][0]['duration'],
+						pix_fmt: mvInfo['streams'][0]['pix_fmt'],
+						size: mvInfo['format']['size'],
+						width: mvInfo['streams'][0]['width'],
+						height: mvInfo['streams'][0]['height'],
+						fps: fps + "fps",
+						bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
+						codec_name: mvInfo['streams'][0]['codec_long_name'],
+						format_name: mvInfo['format']['format_long_name'],
+						catesName: movieInfo.catesName
+					}); 
 					
-					for (var j = 0; j < tisis.length;  j++) {
-						tiArr[x][j] = parseFloat(tisis[j].ti);
-						siArr[x][j] = parseFloat(tisis[j].si);
-					}
+					newMovieObj.save(function(err,Movie){
+						if(err){console.log(err);}
 
-					if (tiArr.length == cates.length) {
-						console.log("tiArr = " + JSON.stringify(tiArr));
-						console.log("siArr = " + JSON.stringify(siArr));
-						var resultObj = euclideanDistanceIndex(maxTi, maxSi, tiArr, siArr);
-						var resultTypeId = catesIds[resultObj.index];
+						var category = newMovieObj.movieCates;
+						console.log("category = " + category);
 
-						var infopath = currentPath + "/" + newMovie;
-						var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
-						child_process.exec(infocmd, function(error, stdout, stderr) {
-							if (error !== null) {
-								console.log('exec error: ' + error);
-							}
-							var mvInfo = JSON.parse(stdout);
-							var fps="";
-							var arr = new Array();
-						    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
-						    if (arr.length>0) {
-						    	fps = arr[0];
-						    }
-
-							newMovieObj = new Movie({
-								title:movieObj.title,
-								content:movieObj.content,
-								ti:maxTi,
-								si:maxSi,
-								edistance:resultObj.eDistance,
-								movieCates:resultTypeId,
-								pic: newPic,
-								movie: newMovie,
-								dir : newDir,
-								showdelay: movieObj.showdelay,
-								duration: mvInfo['streams'][0]['duration'],
-								pix_fmt: mvInfo['streams'][0]['pix_fmt'],
-								size: mvInfo['format']['size'],
-								width: mvInfo['streams'][0]['width'],
-								height: mvInfo['streams'][0]['height'],
-								fps: fps + "fps",
-								bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
-								codec_name: mvInfo['streams'][0]['codec_long_name'],
-								format_name: mvInfo['format']['format_long_name'],
-								catesName: movieInfo.catesName
-							}); 
-							
-							newMovieObj.save(function(err,Movie){
-								if(err){console.log(err);}
-
-								var category = newMovieObj.movieCates;
-								console.log("category = " + category);
-								MovieCate.findById(category,function(err,MovieCate){
-									if(err){console.log(err);}
-									MovieCate.movies.push(Movie._id)
-									MovieCate.save(function(err,MovieCate2){
-										if(err){console.log(err);}
-										saveNetNum = "100%";
-										saveNetMsg = "Finished";
-										//res.redirect('/gl/Movie');
-									});
-								});
-							});
+						MovieCate.movies.push(Movie._id);
+						MovieCate.save(function(err,MovieCate2){
+							if(err){console.log(err);}
+							saveNetNum = "100%";
+							saveNetMsg = "Finished";
 						});
-					}
-					x++;
+					});
 				});
 			}
+
 		});
 	});
 }
@@ -1272,99 +1330,70 @@ function netChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, width
 		console.log("maxTi : " + maxTi);
 		console.log("maxSi : " + maxSi);
 
-		//get and save the information of new video
-		MovieCate.fetch(function(err, cates){
+		//获取DASH Type对应的id
+		MovieCate.findByTitle("DASH",function(err, MovieCate){
 			saveNetNum = "90%";
 			saveNetNum = "computing eDistance value......";
-			console.log("cates = " + JSON.stringify(cates));
-			var tiArr = [];
-			var siArr = [];
-			var catesIds = [];
-			var ret = [];
-			var x = 0, y = 0; 
-			for(var i = 0, len = cates.length; i < len; i++){
-				TISI.findByCateId(cates[i]._id, function(err, tisis){
-					tiArr[x] = [];
-					siArr[x] = [];
-					if (tisis.length > 0) {
-						catesIds[x] = tisis[0].movieCates;
-					} else {
-						catesIds[x] = 0;
+			if(err){console.log(err);}
+			console.log("----MovieCate : " + JSON.stringify(MovieCate));
+
+			if (MovieCate) {
+				var resultTypeId = MovieCate._id;
+				var infopath = currentPath + "/" + newMovie;
+				var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
+
+				child_process.exec(infocmd, function(error, stdout, stderr) {
+					if (error !== null) {
+						console.log('exec error: ' + error);
 					}
+					var mvInfo = JSON.parse(stdout);
+					var fps="";
+					var arr = new Array();
+				    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
+				    if (arr.length>0) {
+				    	fps = arr[0];
+				    }
+
+					newMovieObj = new Movie({
+						title:movieObj.title,
+						content:movieObj.content,
+						ti:maxTi,
+						si:maxSi,
+						edistance:"",
+						movieCates:resultTypeId,
+						pic: newPic,
+						movie: newMovie,
+						dir : newDir,
+						showdelay: movieObj.showdelay,
+						duration: mvInfo['streams'][0]['duration'],
+						pix_fmt: mvInfo['streams'][0]['pix_fmt'],
+						size: mvInfo['format']['size'],
+						width: mvInfo['streams'][0]['width'],
+						height: mvInfo['streams'][0]['height'],
+						fps: fps + "fps",
+						bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
+						codec_name: mvInfo['streams'][0]['codec_long_name'],
+						format_name: mvInfo['format']['format_long_name'],
+						catesName: movieInfo.catesName
+					}); 
 					
-					for (var j = 0; j < tisis.length;  j++) {
-						tiArr[x][j] = parseFloat(tisis[j].ti);
-						siArr[x][j] = parseFloat(tisis[j].si);
-					}
+					newMovieObj.save(function(err,Movie){
+						if(err){console.log(err);}
 
-					// == means a cate reach end
-					if (tiArr.length == cates.length) {
-						console.log("tiArr = " + JSON.stringify(tiArr));
-						console.log("siArr = " + JSON.stringify(siArr));
-						var resultObj = euclideanDistanceIndex(maxTi, maxSi, tiArr, siArr);
-						var resultTypeId = catesIds[resultObj.index];
+						var category = newMovieObj.movieCates;
+						console.log("category = " + category);
 
-						var infopath = currentPath + "/" + newMovie;
-						var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
-						child_process.exec(infocmd, function(error, stdout, stderr) {
-							if (error !== null) {
-								console.log('exec error: ' + error);
-							}
-
-							// 获取视频信息
-							var mvInfo = JSON.parse(stdout);
-							var fps="";
-							var arr = new Array();
-						    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
-						    if (arr.length>0) {
-						    	fps = arr[0];
-						    }
-
-							newMovieObj = new Movie({
-								title:movieObj.title,
-								content:movieObj.content,
-								ti:maxTi,
-								si:maxSi,
-								edistance:resultObj.eDistance,
-								movieCates:resultTypeId,
-								pic: newPic,
-								movie: newMovie,
-								dir : newDir,
-								showdelay: movieObj.showdelay,
-								duration: mvInfo['streams'][0]['duration'],
-								pix_fmt: mvInfo['streams'][0]['pix_fmt'],
-								size: mvInfo['format']['size'],
-								width: mvInfo['streams'][0]['width'],
-								height: mvInfo['streams'][0]['height'],
-								fps: fps + "fps",
-								bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
-								codec_name: mvInfo['streams'][0]['codec_long_name'],
-								format_name: mvInfo['format']['format_long_name'],
-								catesName: movieInfo.catesName
-							}); 
-							
-							newMovieObj.save(function(err,Movie){
-								if(err){console.log(err);}
-								var category = newMovieObj.movieCates;
-								console.log("category = " + category);
-								MovieCate.findById(category,function(err,MovieCate){
-									if(err){console.log(err);}
-									MovieCate.movies.push(Movie._id)
-									MovieCate.save(function(err,MovieCate2){
-										if(err){console.log(err);}
-										saveNetNum = "100%";
-										saveNetMsg = "Finished";
-										//res.redirect('/gl/Movie');
-									});
-								});
-							});
+						MovieCate.movies.push(Movie._id);
+						MovieCate.save(function(err,MovieCate2){
+							if(err){console.log(err);}
+							saveNetNum = "100%";
+							saveNetMsg = "Finished";
 						});
-					}
-					x++;
+					});
 				});
 			}
-		});
 
+		});
 	});
 }
 
@@ -1481,98 +1510,70 @@ function MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj,
 		console.log("maxTi : " + maxTi);
 		console.log("maxSi : " + maxSi);
 		
-		MovieCate.fetch(function(err, cates){
+		//获取DASH Type对应的id
+		MovieCate.findByTitle("DASH",function(err, MovieCate){
 			saveNetNum = "90%";
-			saveNetNum = "computing eDistance value......";
-			console.log("cates = " + JSON.stringify(cates));
-			var tiArr = [];
-			var siArr = [];
-			var catesIds = [];
-			var ret = [];
-			var x = 0, y = 0; 
-			for(var i = 0, len = cates.length; i < len; i++){
-				TISI.findByCateId(cates[i]._id, function(err, tisis){
-					tiArr[x] = [];
-					siArr[x] = [];
-					if (tisis.length > 0) {
-						catesIds[x] = tisis[0].movieCates;
-					} else {
-						catesIds[x] = 0;
+			saveNetMsg = "computing eDistance value......";
+			if(err){console.log(err);}
+			console.log("----MovieCate : " + JSON.stringify(MovieCate));
+
+			if (MovieCate) {
+				var resultTypeId = MovieCate._id;
+				var infopath = currentPath + "/" + newMovie;
+				var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
+
+				child_process.exec(infocmd, function(error, stdout, stderr) {
+					if (error !== null) {
+						console.log('exec error: ' + error);
 					}
+					var mvInfo = JSON.parse(stdout);
+					var fps="";
+					var arr = new Array();
+				    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
+				    if (arr.length>0) {
+				    	fps = arr[0];
+				    }
+
+					newMovieObj = new Movie({
+						title:movieObj.title,
+						content:movieObj.content,
+						ti:maxTi,
+						si:maxSi,
+						edistance:"",
+						movieCates:resultTypeId,
+						pic: newPic,
+						movie: newMovie,
+						dir : newDir,
+						showdelay: movieObj.showdelay,
+						duration: mvInfo['streams'][0]['duration'],
+						pix_fmt: mvInfo['streams'][0]['pix_fmt'],
+						size: mvInfo['format']['size'],
+						width: mvInfo['streams'][0]['width'],
+						height: mvInfo['streams'][0]['height'],
+						fps: fps + "fps",
+						bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
+						codec_name: mvInfo['streams'][0]['codec_long_name'],
+						format_name: mvInfo['format']['format_long_name'],
+						catesName: movieInfo.catesName
+					}); 
 					
-					for (var j = 0; j < tisis.length;  j++) {
-						tiArr[x][j] = parseFloat(tisis[j].ti);
-						siArr[x][j] = parseFloat(tisis[j].si);
-					}
+					newMovieObj.save(function(err,Movie){
+						if(err){console.log(err);}
 
-					if (tiArr.length == cates.length) {
-						console.log("tiArr = " + JSON.stringify(tiArr));
-						console.log("siArr = " + JSON.stringify(siArr));
-						var resultObj = euclideanDistanceIndex(maxTi, maxSi, tiArr, siArr);
-						// var resultTypeId = cates[resultObj.index]._id;
-						var resultTypeId = catesIds[resultObj.index];
+						var category = newMovieObj.movieCates;
+						console.log("category = " + category);
 
-						var infopath = currentPath + "/" + newMovie;
-						var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
-						child_process.exec(infocmd, function(error, stdout, stderr) {
-							if (error !== null) {
-								console.log('exec error: ' + error);
-							}
-
-							// 获取视频信息
-							var mvInfo = JSON.parse(stdout);
-							var fps="";
-							var arr = new Array();
-						    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
-						    if (arr.length>0) {
-						    	fps = arr[0];
-						    }
-
-							newMovieObj = new Movie({
-								title:movieObj.title,
-								content:movieObj.content,
-								ti:maxTi,
-								si:maxSi,
-								edistance:resultObj.eDistance,
-								movieCates:resultTypeId,
-								pic: newPic,
-								movie: newMovie,
-								dir : newDir,
-								showdelay: movieObj.showdelay,
-								duration: mvInfo['streams'][0]['duration'],
-								pix_fmt: mvInfo['streams'][0]['pix_fmt'],
-								size: mvInfo['format']['size'],
-								width: mvInfo['streams'][0]['width'],
-								height: mvInfo['streams'][0]['height'],
-								fps: fps + "fps",
-								bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
-								codec_name: mvInfo['streams'][0]['codec_long_name'],
-								format_name: mvInfo['format']['format_long_name'],
-								catesName: movieInfo.catesName
-							}); 
-							
-							newMovieObj.save(function(err,Movie){
-								if(err){console.log(err);}
-								var category = newMovieObj.movieCates;
-								console.log("category = " + category);
-								MovieCate.findById(category,function(err,MovieCate){
-									if(err){console.log(err);}
-									MovieCate.movies.push(Movie._id)
-									MovieCate.save(function(err,MovieCate2){
-										if(err){console.log(err);}
-										saveNetNum = "100%";
-										saveNetMsg = "Finished";
-										//res.redirect('/gl/Movie');
-									});
-								});
-							});
+						MovieCate.movies.push(Movie._id);
+						MovieCate.save(function(err,MovieCate2){
+							if(err){console.log(err);}
+							saveNetNum = "100%";
+							saveNetMsg = "Finished";
 						});
-					}
-					x++;
+					});
 				});
 			}
-		});
 
+		});
 	});
 }
 
