@@ -11,6 +11,7 @@ module.exports = function(app){
 	
 	//index
 	app.get('/', Index.index)
+	app.get('/resume',Index.resume)
 	app.get('/movieList',Index.movieList)
 	app.get('/guestIndex',Index.guestIndex)
 	app.get('/guestIndex/:cateId',Index.guestIndex)

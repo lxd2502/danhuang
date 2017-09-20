@@ -26,6 +26,11 @@ exports.index = function(req,res){
 	// })
 }
 
+exports.resume = function(req,res){
+	console.log("-----contr/index.js--- resume function")
+	res.render('resume');
+}
+
 exports.aboutus = function(req,res){
 	console.log("-----contr/index.js--- aboutus function")
 	res.render('aboutus');
