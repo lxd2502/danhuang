@@ -2,6 +2,7 @@ var Movie = require("../models/movie")
 var MovieCate = require("../models/movieCate")
 var Comment = require("../models/comment");
 var Network = require("../models/network")
+// var DashInfo = require("../models/dash")
 var TISI = require("../models/tisi");
 var markdown = require('markdown').markdown
 var mark = require('marked')
@@ -99,6 +100,144 @@ exports.saveDashParameter = function(req, res) {
 	console.log("dashParams \n" + JSON.stringify(dashParams));
 	console.log("netObj \n" + JSON.stringify(netObj));
 
+	var movieId = movieObj._id;
+
+	if(movieId){
+		Movie.findById(movieId,function(err,movieInfo){
+			if(err) { 
+				console.log(err); 
+			}
+			saveNetNum = "10%";
+			saveNetMsg = "c dash parameters...";
+			console.log(JSON.stringify(movieInfo));
+
+			var currentPath, newPath;
+			var newMovie;
+			var cmd;
+			var targetMovie;
+			var newPic;
+
+			//create new dir
+			newDir = mkdirNewPath();
+			currentPath = processor.cwd() + "/public/movie/";
+			newPath = currentPath + newDir;
+			targetMovie = newDir + ".target.mp4";
+			newMovie = newDir + "/" + targetMovie;
+			if (movieInfo.pic.indexOf("/") > -1) {
+				var tempArr = movieInfo.pic.split("/");
+				movieInfo.pic = tempArr[0] + "/" + tempArr[tempArr.length - 1];
+				newPic = newDir + "/" + tempArr[tempArr.length - 1];
+			} else {
+				newPic = newDir + "/" + movieInfo.pic;
+			}
+
+			//copy src video , config script to new dir
+			var moviePath = currentPath + movieInfo.movie;
+			var picPath = currentPath + movieInfo.pic;
+			var configPath = processor.cwd() + "/public/nsConfig/*";
+			cmd = "cp -rf " + moviePath + " " + picPath + " " + configPath + " "+ newPath;
+
+			console.log("cmd :" + cmd);
+			console.log("newMovie : " + newMovie);
+
+			saveNetNum = "40%";
+			saveNetMsg = "setting dash parameters...";
+			saveNetDir =  newDir;
+			child = child_process.execSync(cmd, function(error, stdout, stderr) {
+				flag = false;
+				console.log('stdout: ' + stdout);
+				console.log('stderr: ' + stderr);
+				if (error !== null) {
+					console.log('exec error: ' + error);
+				}
+			});
+
+			saveNetNum = "65%";
+			saveNetMsg = "creating new video...";
+
+			//字符串分割，拿出实际视频名称作为process.sh脚步的参数
+			var arr = new Array();
+			arr = movieInfo.movie.split("/");
+			var srcMovie = arr[arr.length - 1];
+			console.log("srcMovie :\n" + srcMovie);
+
+			//ffmepeg handle the video
+			var ffmpegCmd = "ffmpeg  -i aaa.mp4  -acodec copy -vcodec copy example.mp4"
+
+
+			var nsCmd = "python2.7 ~/home/dash/Bento4/Source/Python/utils/mp4-dash-encode.py -b 5 " + newPath + "/" + srcMovie;
+			console.log("nsCmd :\n" + nsCmd);
+
+			child_process.exec(nsCmd, options, function(error, stdout, stderr) {
+				saveNetNum = "80%";
+				saveNetMsg = "creating new video...";
+				console.log('stdout: ' + stdout);
+				console.log('stderr: ' + stderr);
+				if (error !== null) {
+					console.log('exec error: ' + error);
+				}
+
+
+				res.redirect('/gl/dash');
+				return;
+			});
+
+			return;
+
+
+			MovieCate.find(movieInfo.movieCates,function(err,cates){
+				if(err){
+					console.log(err);
+				}
+				Network.fetch(function(err,Networks){
+					if(err){
+						console.log(err);
+					}
+
+					var oldNet = {
+						bandwidth: "",
+						timedelay: "",
+						packetloss: "",
+						mvWidth: movieInfo.width,
+						mvHeight: movieInfo.height,
+						fps: movieInfo.fps,
+						bps: movieInfo.bps,
+						unsharp: "1",
+					}
+
+					var infoChanged = false;
+					if (oldNet.mvWidth == netObj.mvWidth && oldNet.mvHeight == netObj.mvHeight && 
+						oldNet.fps == netObj.fps && oldNet.bps == netObj.bps && oldNet.unsharp == netObj.unsharp 
+						&& movieInfo.showdelay == movieObj.showdelay) {
+						infoChanged = false;
+					} else {
+						infoChanged = true;
+					}
+
+					if (!(netObj.bandwidth > 0) && !(netObj.timedelay > 0) && !infoChanged){
+						res.redirect('/gl/dash');
+						return;
+					}
+
+					var width = movieInfo.width;
+					var height = movieInfo.height;
+					var fps = movieInfo.fps;
+
+					//设置了带宽，延时等网络参数，优先处理网络参数
+					if ((netObj.bandwidth > 0 || netObj.timedelay > 0) && infoChanged) {
+						netAndMovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps);
+					} else if ((netObj.bandwidth > 0 || netObj.timedelay > 0) && !infoChanged) {
+						netChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, width, height, fps);
+					} else {
+						MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps);
+					}
+				});
+			});
+		});
+	}
+
+	return;
+
 	MovieCate.findByTitle("DASH",function(err, MovieCate){
 		if(err){console.log(err);}
 		// console.log("----MovieCate : " + JSON.stringify(MovieCate));
@@ -116,6 +255,454 @@ exports.saveDashParameter = function(req, res) {
 		}
 	});
 }
+
+
+function MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps) {
+	console.log("---------MovieInfoChanged------------");
+	var currentPath, newPath;
+	var newMovie;
+	var cmd;
+	var targetMovie;
+	var newPic;
+
+	//create new dir
+	newDir = mkdirNewPath();
+	currentPath = processor.cwd() + "/public/movie/";
+	newPath = currentPath + newDir;
+	targetMovie = newDir + ".target.mp4";
+	newMovie = newDir + "/" + targetMovie;
+	if (movieInfo.pic.indexOf("/") > -1) {
+		var tempArr = movieInfo.pic.split("/");
+		movieInfo.pic = tempArr[0] + "/" + tempArr[tempArr.length - 1];
+		newPic = newDir + "/" + tempArr[tempArr.length - 1];
+	} else {
+		newPic = newDir + "/" + movieInfo.pic;
+	}
+
+	//copy src video , config script to new dir
+	var moviePath = currentPath + movieInfo.movie;
+	var picPath = currentPath + movieInfo.pic;
+	var configPath = processor.cwd() + "/public/nsConfig/*";
+	cmd = "cp -rf " + moviePath + " " + picPath + " " + configPath + " "+ newPath;
+
+	console.log("cmd :" + cmd);
+	console.log("newMovie : " + newMovie);
+
+	saveNetNum = "40%";
+	saveNetMsg = "setting dash parameters...";
+	saveNetDir =  newDir;
+	child = child_process.execSync(cmd, function(error, stdout, stderr) {
+		flag = false;
+		console.log('stdout: ' + stdout);
+		console.log('stderr: ' + stderr);
+		if (error !== null) {
+			console.log('exec error: ' + error);
+		}
+	});
+	
+	saveNetNum = "65%";
+	saveNetMsg = "creating new video...";
+
+	//字符串分割，拿出实际视频名称作为process.sh脚步的参数
+	var arr = new Array();
+    arr = movieInfo.movie.split("/");
+	var srcMovie = arr[arr.length - 1];
+	console.log("srcMovie :\n" + srcMovie);
+
+	//ffmepeg handle the video
+	var nsCmd = "python2.7 ~/home/dash/Bento4/Source/Python/utils/mp4-dash-encode.py -b 5 " + newPath + "/" + srcMovie;
+	console.log("nsCmd :\n" + nsCmd);
+
+	res.redirect('/gl/dash');
+	return;
+
+	child_process.exec(nsCmd, options, function(error, stdout, stderr) {
+		saveNetNum = "80%";
+		saveNetMsg = "creating new video...";
+		console.log('stdout: ' + stdout);
+		console.log('stderr: ' + stderr);
+		if (error !== null) {
+			console.log('exec error: ' + error);
+		}
+
+
+
+
+
+		var cmd = "bash createAnalysisFiles.sh " + newPath + " " + srcMovie + " " + targetMovie + " " + width + " " + height;
+		child_process.execSync(cmd, options, function(error, stdout, stderr) {
+			console.log('stdout: ' + stdout);
+			console.log('stderr: ' + stderr);
+			if (error !== null) {
+				console.log('exec error: ' + error);
+			};
+		});
+
+		//get ti, si of the new video
+		var data=fs.readFileSync(newPath + "/result_tisi.csv","utf-8");  
+		arr = data.split("\n");
+		var maxTi, maxSi;
+		for(i=0;i<arr.length-1;i++)
+		{
+			arr1 = arr[i].split(" ");
+			for(j=0;j<arr1.length-1;j++) {
+				if (arr1[0] == "maxTI") {
+					maxTi = arr1[1];
+				} else if (arr1[0] == "maxSI") {
+					maxSi = arr1[1];
+				}
+			}
+		    console.log("arr[" + i + "] = " + arr[i]);
+		}
+		console.log("maxTi : " + maxTi);
+		console.log("maxSi : " + maxSi);
+		
+		//获取DASH Type对应的id
+		MovieCate.findByTitle("DASH",function(err, MovieCate){
+			saveNetNum = "90%";
+			saveNetMsg = "computing eDistance value......";
+			if(err){console.log(err);}
+			console.log("----MovieCate : " + JSON.stringify(MovieCate));
+
+			if (MovieCate) {
+				var resultTypeId = MovieCate._id;
+				var infopath = currentPath + "/" + newMovie;
+				var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
+
+				child_process.exec(infocmd, function(error, stdout, stderr) {
+					if (error !== null) {
+						console.log('exec error: ' + error);
+					}
+					var mvInfo = JSON.parse(stdout);
+					var fps="";
+					var arr = new Array();
+				    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
+				    if (arr.length>0) {
+				    	fps = arr[0];
+				    }
+
+					newMovieObj = new Movie({
+						title:movieObj.title,
+						content:movieObj.content,
+						ti:maxTi,
+						si:maxSi,
+						edistance:"",
+						movieCates:resultTypeId,
+						pic: newPic,
+						movie: newMovie,
+						dir : newDir,
+						showdelay: movieObj.showdelay,
+						duration: mvInfo['streams'][0]['duration'],
+						pix_fmt: mvInfo['streams'][0]['pix_fmt'],
+						size: mvInfo['format']['size'],
+						width: mvInfo['streams'][0]['width'],
+						height: mvInfo['streams'][0]['height'],
+						fps: fps + "fps",
+						bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
+						codec_name: mvInfo['streams'][0]['codec_long_name'],
+						format_name: mvInfo['format']['format_long_name'],
+						catesName: movieInfo.catesName
+					}); 
+					
+					newMovieObj.save(function(err,Movie){
+						if(err){console.log(err);}
+
+						var category = newMovieObj.movieCates;
+						console.log("category = " + category);
+
+						MovieCate.movies.push(Movie._id);
+						MovieCate.save(function(err,MovieCate2){
+							if(err){console.log(err);}
+							saveNetNum = "100%";
+							saveNetMsg = "Finished";
+						});
+					});
+				});
+			}
+
+		});
+	});
+}
+
+// exports.saveDashParameter = function(req, res) {
+// 	console.log("-----contr/dash.js--- saveDashParameter function")
+// 	var movieObj = req.body.movie;
+// 	var dashParams = req.body.dashParams;
+// 	var netObj = req.body.network;
+// 	console.log("movieObj \n" + JSON.stringify(movieObj));
+// 	console.log("dashParams \n" + JSON.stringify(dashParams));
+// 	console.log("netObj \n" + JSON.stringify(netObj));
+
+// 	var movieId = movieObj._id;
+
+// 	if(movieId){
+// 		Movie.findById(movieId,function(err,movieInfo){
+// 			if(err) { 
+// 				console.log(err); 
+// 			}
+// 			saveNetNum = "10%";
+// 			saveNetMsg = "c dash parameters...";
+// 			console.log(JSON.stringify(movieInfo));
+// 			MovieCate.find(movieInfo.movieCates,function(err,cates){
+// 				if(err){
+// 					console.log(err);
+// 				}
+// 				Network.fetch(function(err,Networks){
+// 					if(err){
+// 						console.log(err);
+// 					}
+
+// 					var oldNet = {
+// 						bandwidth: "",
+// 						timedelay: "",
+// 						packetloss: "",
+// 						mvWidth: movieInfo.width,
+// 						mvHeight: movieInfo.height,
+// 						fps: movieInfo.fps,
+// 						bps: movieInfo.bps,
+// 						unsharp: "1",
+// 					}
+
+// 					var infoChanged = false;
+// 					if (oldNet.mvWidth == netObj.mvWidth && oldNet.mvHeight == netObj.mvHeight && 
+// 						oldNet.fps == netObj.fps && oldNet.bps == netObj.bps && oldNet.unsharp == netObj.unsharp 
+// 						&& movieInfo.showdelay == movieObj.showdelay) {
+// 						infoChanged = false;
+// 					} else {
+// 						infoChanged = true;
+// 					}
+
+// 					if (!(netObj.bandwidth > 0) && !(netObj.timedelay > 0) && !infoChanged){
+// 						res.redirect('/gl/dash');
+// 						return;
+// 					}
+
+// 					var width = movieInfo.width;
+// 					var height = movieInfo.height;
+// 					var fps = movieInfo.fps;
+
+// 					//设置了带宽，延时等网络参数，优先处理网络参数
+// 					if ((netObj.bandwidth > 0 || netObj.timedelay > 0) && infoChanged) {
+// 						netAndMovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps);
+// 					} else if ((netObj.bandwidth > 0 || netObj.timedelay > 0) && !infoChanged) {
+// 						netChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, width, height, fps);
+// 					} else {
+// 						MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps);
+// 					}
+// 				});
+// 			});
+// 		});
+// 	}
+
+// 	return;
+
+// 	MovieCate.findByTitle("DASH",function(err, MovieCate){
+// 		if(err){console.log(err);}
+// 		// console.log("----MovieCate : " + JSON.stringify(MovieCate));
+		
+// 		if (MovieCate) {
+// 			 // 获取DASH视频
+// 			Movie.findByCateId(MovieCate._id, function(err, movies){
+// 				if(err){console.log(err);}
+// 				// console.log("----movies : " + JSON.stringify(movies));
+				
+// 				res.render('dashVideosList',{
+// 					movies:movies
+// 				});
+// 			});
+// 		}
+// 	});
+// }
+
+// function MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps) {
+// 	console.log("---------MovieInfoChanged------------");
+// 	var currentPath, newPath;
+// 	var newMovie;
+// 	var cmd;
+// 	var targetMovie;
+// 	var newPic;
+
+// 	//create new dir
+// 	newDir = mkdirNewPath();
+// 	currentPath = processor.cwd() + "/public/movie/";
+// 	newPath = currentPath + newDir;
+// 	targetMovie = newDir + ".target.mp4";
+// 	newMovie = newDir + "/" + targetMovie;
+// 	if (movieInfo.pic.indexOf("/") > -1) {
+// 		var tempArr = movieInfo.pic.split("/");
+// 		movieInfo.pic = tempArr[0] + "/" + tempArr[tempArr.length - 1];
+// 		newPic = newDir + "/" + tempArr[tempArr.length - 1];
+// 	} else {
+// 		newPic = newDir + "/" + movieInfo.pic;
+// 	}
+
+// 	//copy src video , config script to new dir
+// 	var moviePath = currentPath + movieInfo.movie;
+// 	var picPath = currentPath + movieInfo.pic;
+// 	var configPath = processor.cwd() + "/public/nsConfig/*";
+// 	cmd = "cp -rf " + moviePath + " " + picPath + " " + configPath + " "+ newPath;
+
+// 	var network = Networks[0]; 
+// 	console.log("cmd :" + cmd);
+// 	console.log("newMovie : " + newMovie);
+
+// 	saveNetNum = "40%";
+// 	saveNetMsg = "setting network parameters...";
+// 	saveNetDir =  newDir;
+// 	child = child_process.execSync(cmd, function(error, stdout, stderr) {
+// 		flag = false;
+// 		console.log('stdout: ' + stdout);
+// 		console.log('stderr: ' + stderr);
+// 		if (error !== null) {
+// 			console.log('exec error: ' + error);
+// 		}
+// 	});
+	
+// 	saveNetNum = "65%";
+// 	saveNetMsg = "creating new video...";
+
+// 	//字符串分割，拿出实际视频名称作为process.sh脚步的参数
+// 	var arr = new Array();
+//     arr = movieInfo.movie.split("/");
+// 	var srcMovie = arr[arr.length - 1];
+// 	console.log("srcMovie :\n" + srcMovie);
+
+// 	//ffmepeg handle the video
+// 	var nsCmd = "ffmpeg -i " + newPath + "/" + srcMovie + " ";
+// 	if (netObj && oldNet) {
+// 		if (netObj.fps > 0 && netObj.fps != oldNet.fps) {
+// 			nsCmd += "-r " + netObj.fps + " ";
+// 		}
+
+// 		if (netObj.bps > 0 &&netObj.bps != oldNet.bps) {
+// 			nsCmd += "-b " + netObj.bps + "k ";
+// 		}
+
+// 		if (netObj.mvWidth > 0 && netObj.mvHeight > 0 && netObj.mvWidth != oldNet.mvWidth && netObj.mvHeight != oldNet.mvHeight) {
+// 			nsCmd += "-s " + netObj.mvWidth + "*" + netObj.mvHeight + " ";
+// 		}
+
+// 		if (netObj.unsharp >=-2 && netObj.unsharp <= 5 && netObj.unsharp != oldNet.unsharp) {
+// 			nsCmd += "-vf unsharp=5:5:" + netObj.unsharp + " ";
+// 		}
+// 	}
+
+// 	// exec ffmpeg
+// 	nsCmd += newPath + "/" + targetMovie;
+// 	console.log("nsCmd :\n" + nsCmd);
+// 	child_process.exec(nsCmd, options, function(error, stdout, stderr) {
+// 		saveNetNum = "80%";
+// 		saveNetMsg = "creating new video...";
+// 		console.log('stdout: ' + stdout);
+// 		console.log('stderr: ' + stderr);
+// 		if (error !== null) {
+// 			console.log('exec error: ' + error);
+// 		}
+
+// 		var cmd = "bash createAnalysisFiles.sh " + newPath + " " + srcMovie + " " + targetMovie + " " + width + " " + height;
+// 		child_process.execSync(cmd, options, function(error, stdout, stderr) {
+// 			console.log('stdout: ' + stdout);
+// 			console.log('stderr: ' + stderr);
+// 			if (error !== null) {
+// 				console.log('exec error: ' + error);
+// 			};
+// 		});
+
+// 		//get ti, si of the new video
+// 		var data=fs.readFileSync(newPath + "/result_tisi.csv","utf-8");  
+// 		arr = data.split("\n");
+// 		var maxTi, maxSi;
+// 		for(i=0;i<arr.length-1;i++)
+// 		{
+// 			arr1 = arr[i].split(" ");
+// 			for(j=0;j<arr1.length-1;j++) {
+// 				if (arr1[0] == "maxTI") {
+// 					maxTi = arr1[1];
+// 				} else if (arr1[0] == "maxSI") {
+// 					maxSi = arr1[1];
+// 				}
+// 			}
+// 		    console.log("arr[" + i + "] = " + arr[i]);
+// 		}
+// 		console.log("maxTi : " + maxTi);
+// 		console.log("maxSi : " + maxSi);
+		
+// 		//获取DASH Type对应的id
+// 		MovieCate.findByTitle("DASH",function(err, MovieCate){
+// 			saveNetNum = "90%";
+// 			saveNetMsg = "computing eDistance value......";
+// 			if(err){console.log(err);}
+// 			console.log("----MovieCate : " + JSON.stringify(MovieCate));
+
+// 			if (MovieCate) {
+// 				var resultTypeId = MovieCate._id;
+// 				var infopath = currentPath + "/" + newMovie;
+// 				var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
+
+// 				child_process.exec(infocmd, function(error, stdout, stderr) {
+// 					if (error !== null) {
+// 						console.log('exec error: ' + error);
+// 					}
+// 					var mvInfo = JSON.parse(stdout);
+// 					var fps="";
+// 					var arr = new Array();
+// 				    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
+// 				    if (arr.length>0) {
+// 				    	fps = arr[0];
+// 				    }
+
+// 					newMovieObj = new Movie({
+// 						title:movieObj.title,
+// 						content:movieObj.content,
+// 						ti:maxTi,
+// 						si:maxSi,
+// 						edistance:"",
+// 						movieCates:resultTypeId,
+// 						pic: newPic,
+// 						movie: newMovie,
+// 						dir : newDir,
+// 						showdelay: movieObj.showdelay,
+// 						duration: mvInfo['streams'][0]['duration'],
+// 						pix_fmt: mvInfo['streams'][0]['pix_fmt'],
+// 						size: mvInfo['format']['size'],
+// 						width: mvInfo['streams'][0]['width'],
+// 						height: mvInfo['streams'][0]['height'],
+// 						fps: fps + "fps",
+// 						bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
+// 						codec_name: mvInfo['streams'][0]['codec_long_name'],
+// 						format_name: mvInfo['format']['format_long_name'],
+// 						catesName: movieInfo.catesName
+// 					}); 
+					
+// 					newMovieObj.save(function(err,Movie){
+// 						if(err){console.log(err);}
+
+// 						var category = newMovieObj.movieCates;
+// 						console.log("category = " + category);
+
+// 						MovieCate.movies.push(Movie._id);
+// 						MovieCate.save(function(err,MovieCate2){
+// 							if(err){console.log(err);}
+// 							saveNetNum = "100%";
+// 							saveNetMsg = "Finished";
+// 						});
+// 					});
+// 				});
+// 			}
+
+// 		});
+// 	});
+// }
+
+
+
+
+
+
+
+
+
+
 
 exports.mvUpload = function(req, res){
 	console.log("-----contr/Movie.js--- mvUpload function")
@@ -1397,186 +1984,6 @@ function netChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, width
 	});
 }
 
-function MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps) {
-	console.log("---------MovieInfoChanged------------");
-	var currentPath, newPath;
-	var newMovie;
-	var cmd;
-	var targetMovie;
-	var newPic;
-
-	//create new dir
-	newDir = mkdirNewPath();
-	currentPath = processor.cwd() + "/public/movie/";
-	newPath = currentPath + newDir;
-	targetMovie = newDir + ".target.mp4";
-	newMovie = newDir + "/" + targetMovie;
-	if (movieInfo.pic.indexOf("/") > -1) {
-		var tempArr = movieInfo.pic.split("/");
-		movieInfo.pic = tempArr[0] + "/" + tempArr[tempArr.length - 1];
-		newPic = newDir + "/" + tempArr[tempArr.length - 1];
-	} else {
-		newPic = newDir + "/" + movieInfo.pic;
-	}
-
-	//copy src video , config script to new dir
-	var moviePath = currentPath + movieInfo.movie;
-	var picPath = currentPath + movieInfo.pic;
-	var configPath = processor.cwd() + "/public/nsConfig/*";
-	cmd = "cp -rf " + moviePath + " " + picPath + " " + configPath + " "+ newPath;
-
-	var network = Networks[0]; 
-	console.log("cmd :" + cmd);
-	console.log("newMovie : " + newMovie);
-
-	saveNetNum = "40%";
-	saveNetMsg = "setting network parameters...";
-	saveNetDir =  newDir;
-	child = child_process.execSync(cmd, function(error, stdout, stderr) {
-		flag = false;
-		console.log('stdout: ' + stdout);
-		console.log('stderr: ' + stderr);
-		if (error !== null) {
-			console.log('exec error: ' + error);
-		}
-	});
-	
-	saveNetNum = "65%";
-	saveNetMsg = "creating new video...";
-
-	//字符串分割，拿出实际视频名称作为process.sh脚步的参数
-	var arr = new Array();
-    arr = movieInfo.movie.split("/");
-	var srcMovie = arr[arr.length - 1];
-	console.log("srcMovie :\n" + srcMovie);
-
-	//ffmepeg handle the video
-	var nsCmd = "ffmpeg -i " + newPath + "/" + srcMovie + " ";
-	if (netObj && oldNet) {
-		if (netObj.fps > 0 && netObj.fps != oldNet.fps) {
-			nsCmd += "-r " + netObj.fps + " ";
-		}
-
-		if (netObj.bps > 0 &&netObj.bps != oldNet.bps) {
-			nsCmd += "-b " + netObj.bps + "k ";
-		}
-
-		if (netObj.mvWidth > 0 && netObj.mvHeight > 0 && netObj.mvWidth != oldNet.mvWidth && netObj.mvHeight != oldNet.mvHeight) {
-			nsCmd += "-s " + netObj.mvWidth + "*" + netObj.mvHeight + " ";
-		}
-
-		if (netObj.unsharp >=-2 && netObj.unsharp <= 5 && netObj.unsharp != oldNet.unsharp) {
-			nsCmd += "-vf unsharp=5:5:" + netObj.unsharp + " ";
-		}
-	}
-
-	// exec ffmpeg
-	nsCmd += newPath + "/" + targetMovie;
-	console.log("nsCmd :\n" + nsCmd);
-	child_process.exec(nsCmd, options, function(error, stdout, stderr) {
-		saveNetNum = "80%";
-		saveNetMsg = "creating new video...";
-		console.log('stdout: ' + stdout);
-		console.log('stderr: ' + stderr);
-		if (error !== null) {
-			console.log('exec error: ' + error);
-		}
-
-		var cmd = "bash createAnalysisFiles.sh " + newPath + " " + srcMovie + " " + targetMovie + " " + width + " " + height;
-		child_process.execSync(cmd, options, function(error, stdout, stderr) {
-			console.log('stdout: ' + stdout);
-			console.log('stderr: ' + stderr);
-			if (error !== null) {
-				console.log('exec error: ' + error);
-			};
-		});
-
-		//get ti, si of the new video
-		var data=fs.readFileSync(newPath + "/result_tisi.csv","utf-8");  
-		arr = data.split("\n");
-		var maxTi, maxSi;
-		for(i=0;i<arr.length-1;i++)
-		{
-			arr1 = arr[i].split(" ");
-			for(j=0;j<arr1.length-1;j++) {
-				if (arr1[0] == "maxTI") {
-					maxTi = arr1[1];
-				} else if (arr1[0] == "maxSI") {
-					maxSi = arr1[1];
-				}
-			}
-		    console.log("arr[" + i + "] = " + arr[i]);
-		}
-		console.log("maxTi : " + maxTi);
-		console.log("maxSi : " + maxSi);
-		
-		//获取DASH Type对应的id
-		MovieCate.findByTitle("DASH",function(err, MovieCate){
-			saveNetNum = "90%";
-			saveNetMsg = "computing eDistance value......";
-			if(err){console.log(err);}
-			console.log("----MovieCate : " + JSON.stringify(MovieCate));
-
-			if (MovieCate) {
-				var resultTypeId = MovieCate._id;
-				var infopath = currentPath + "/" + newMovie;
-				var infocmd = "ffprobe -v quiet -print_format json -show_format -show_streams " + infopath;
-
-				child_process.exec(infocmd, function(error, stdout, stderr) {
-					if (error !== null) {
-						console.log('exec error: ' + error);
-					}
-					var mvInfo = JSON.parse(stdout);
-					var fps="";
-					var arr = new Array();
-				    arr = mvInfo['streams'][0]['r_frame_rate'].split("/");
-				    if (arr.length>0) {
-				    	fps = arr[0];
-				    }
-
-					newMovieObj = new Movie({
-						title:movieObj.title,
-						content:movieObj.content,
-						ti:maxTi,
-						si:maxSi,
-						edistance:"",
-						movieCates:resultTypeId,
-						pic: newPic,
-						movie: newMovie,
-						dir : newDir,
-						showdelay: movieObj.showdelay,
-						duration: mvInfo['streams'][0]['duration'],
-						pix_fmt: mvInfo['streams'][0]['pix_fmt'],
-						size: mvInfo['format']['size'],
-						width: mvInfo['streams'][0]['width'],
-						height: mvInfo['streams'][0]['height'],
-						fps: fps + "fps",
-						bps: Math.round(mvInfo['streams'][0]['bit_rate']/1000) + "kbps",
-						codec_name: mvInfo['streams'][0]['codec_long_name'],
-						format_name: mvInfo['format']['format_long_name'],
-						catesName: movieInfo.catesName
-					}); 
-					
-					newMovieObj.save(function(err,Movie){
-						if(err){console.log(err);}
-
-						var category = newMovieObj.movieCates;
-						console.log("category = " + category);
-
-						MovieCate.movies.push(Movie._id);
-						MovieCate.save(function(err,MovieCate2){
-							if(err){console.log(err);}
-							saveNetNum = "100%";
-							saveNetMsg = "Finished";
-						});
-					});
-				});
-			}
-
-		});
-	});
-}
-
 exports.saveNetworkStatus = function(req,res){
 	console.log("status :" + saveNetNum + "    msg :" + saveNetMsg + "   newDir : " + newDir);
 	res.json({status : saveNetNum, msg : saveNetMsg, newDir : saveNetDir});
@@ -1887,99 +2294,6 @@ function exportExcel(headers, rows) {
     conf.rows = rows;
     var result = nodeExcel.execute(conf);
     return result;
-}
-
-//无用函数
-exports.baseMovieUpload = function(req, res){
-	// console.log("-----contr/Movie.js--- baseMovieUpload function")
-	// upBaseMvNum = "5%";
-	// upBaseMvMsg = "正在上传视频...";
-	//   var message = '';
-	//   var form = new formidable.IncomingForm();   //创建上传表单
-	//     form.encoding = 'utf-8';        //设置编辑
-	//     form.uploadDir = 'public/baseMovie/';     //设置上传目录
-	//     form.keepExtensions = true;     //保留后缀
-	//     form.maxFieldsSize = 2 * 1024 * 1024;   //文件大小
-	
-	// upBaseMvNum = "15%";
-	// upBaseMvMsg = "正在上传视频...";
-	//   form.parse(req, function(err, fields, files) {
-	//     if (err) {
-	//       console.log(err);
-	//       res.json({result : 0});
-	//     }  
-	//     upBaseMvNum = "40%";
-	// 	upBaseMvMsg = "正在上传视频...";
-	//     var filename = files.resource.name;
-
-	//     // 对文件名进行处理，以应对上传同名文件的情况
-	//     var nameArray = filename.split('.');
-	//     var type = nameArray[nameArray.length-1];
-	//     var name = '';
-	//     for(var i=0; i<nameArray.length-1; i++){
-	//         name = name + nameArray[i];
-	//     }
-	//     var rand = Math.random()*100 + 900;
-	//     var num = parseInt(rand, 10);
-
-	//     var avatarName = name + num +  '.' + type;
-
-	//     var newPath = form.uploadDir + avatarName ;
-	//     fs.renameSync(files.resource.path, newPath);  //重命名
-	// 	var currentPath = processor.cwd();
-	// 	newPath = currentPath + "/" + newPath;
-
-	// 	var yuvFile = "";
-	// 	var TISICMD = "";
-
-	// 	console.log("type : " + type);
-
-	// 	if (type !== "yuv") {
-	// 		upBaseMvNum = "60%";
-	// 		upBaseMvMsg = "正在将视频转换为yuv格式...";
-	// 		var yuvFile = currentPath + "/" + form.uploadDir + name + num + ".yuv"; 
-	//     	var cmd = "ffmpeg -i " + newPath + " " + yuvFile;
-	//     	TISICMD = "TISI -i " + yuvFile + " -x 352 -y 288 -f 420";
-	    	
-	//     	console.log("------------\ncmd = " + cmd);
-	//     	child = child_process.execSync(cmd, function (error, stdout, stderr) {
-	// 		    console.log('stdout: ' + stdout);
-	// 		    console.log('stderr: ' + stderr);
-	// 		    if (error !== null) {
-	// 		      console.log('exec error: ' + error);
-	// 		    }
-	// 		});
-	//     } else {
-	//     	TISICMD = "TISI -i " + newPath + " -x 352 -y 288 -f 420";
-	//     }
-
-	// 	console.log("-----------\n" + TISICMD + "\n-----------");
-	// 	upBaseMvNum = "70%";
-	// 	upBaseMvMsg = "正在计算TI，SI值...";
-
-	// 	var maxTI;
-	// 	var maxSI;
-	// 	child = child_process.exec(TISICMD,
-	// 	  function (error, stdout, stderr) {
-	// 	    console.log('stdout: ' + stdout);
-	// 	    maxTI = getMaxTI(stdout);
-	// 		maxSI = getMaxSI(stdout);
-	// 		console.log('maxTI:\n' + maxTI);
-	// 		console.log('maxSI:\n' + maxSI);
-	// 	    console.log('stderr: ' + stderr);
-	// 	    if (error !== null) {
-	// 	      console.log('exec error: ' + error);
-	// 	    }
-
-	// 	    var maxTISI = {
-	// 			maxTI: maxTI,
-	// 			maxSI: maxSI
-	// 		}
-	// 		upBaseMvNum = "100%";
-	// 		upBaseMvMsg = "上传成功！";
-	// 		res.json({result : avatarName, tisidata : maxTISI});
-	// 	});
-	//   });
 }
 
 function getMaxTI(data) {

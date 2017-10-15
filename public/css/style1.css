@@ -1565,6 +1565,13 @@ form label {
   font-size: 18px;
   font-weight: 300;
 }
+.form-control1 {
+  box-shadow: none;
+  background: transparent;
+  height: 24px;
+  font-size: 13px;
+  font-weight: 200;
+}
 .form-control:active, .form-control:focus {
   outline: none;
   box-shadow: none;
