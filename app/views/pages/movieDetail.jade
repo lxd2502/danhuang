@@ -38,7 +38,7 @@ block content
 						div.box-body
 							div.row
 								div.col-md-6.col-lg-8(style="padding: 5px 15px 5px 25px;float:left;")
-									video#video(src="./#{movie.movie}" style="width:100%" height=450 controls="controls" preload="preload")
+									video#video(data-dashjs-player autoplay src="./#{movie.movie}" style="width:100%" height=450 controls="controls" preload="preload")
 									
 									div.inner(style="font-size: 14px;")
 										span(style="margin-bottom:2px; margin-right: 20px;") 

@@ -40,9 +40,14 @@ html
     div#shortcodes
         div.container
             div.row
-                //- video#video(src="/baseMovie/introduction.mp4" style="width:45%" controls="controls" preload="preload")
-                <video data-dashjs-player autoplay src="https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd" controls></video>
-
+                //video#video(data-dashjs-player autoplay src="http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps.mpd" controls="controls" preload="preload")
+                //video#video(data-dashjs-player autoplay src="/dash/demo1/demo1.mp4" controls="controls" preload="preload")
+                //video#video(data-dashjs-player autoplay src="/dash/demo1/demo1.mp4" controls="controls" preload="preload")
+                video#video(data-dashjs-player autoplay src="/dash/test/index.mpd" controls="controls" preload="preload")
+                video#video(data-dashjs-player autoplay src="/dash/test/output/stream.mpd" controls="controls" preload="preload")
+                video#video(data-dashjs-player autoplay src="/dash/aaa/output/stream.mpd" controls="controls" preload="preload")
+                //- video#video(data-dashjs-player autoplay src="https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd" controls="controls" preload="preload")
+                //video#video(data-dashjs-player autoplay src="http://qoecenter.oss-cn-shanghai.aliyuncs.com/test/test_dash.mpd" controls="controls" preload="preload")
     footer.page
       div.container
         .row  

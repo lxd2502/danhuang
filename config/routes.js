@@ -82,6 +82,7 @@ module.exports = function(app){
 	app.get('/gl/dash/setparams/:id', User.signinRequired, Dash.setParameter)
 	app.get('/gl/dash/setDashParams/:id', User.signinRequired, Dash.setDashParameter)
 	app.post('/gl/dash/saveNetworkStatus', Dash.saveNetworkStatus)
+	app.post('/gl/dash/saveDashStatus', Dash.saveDashStatus)
 	app.post('/gl/dash/saveNetwork', User.signinRequired, Dash.saveNetwork)
 	app.post('/gl/dash/saveDashParameter', User.signinRequired, Dash.saveDashParameter)
 

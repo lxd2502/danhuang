@@ -122,7 +122,7 @@ exports.saveDashParameter = function(req, res) {
 			currentPath = processor.cwd() + "/public/movie/";
 			newPath = currentPath + newDir;
 			targetMovie = newDir + ".target.mp4";
-			newMovie = newDir + "/" + targetMovie;
+			newMovie = newDir + "/output/stream.mpd";
 			if (movieInfo.pic.indexOf("/") > -1) {
 				var tempArr = movieInfo.pic.split("/");
 				movieInfo.pic = tempArr[0] + "/" + tempArr[tempArr.length - 1];
@@ -162,75 +162,113 @@ exports.saveDashParameter = function(req, res) {
 			console.log("srcMovie :\n" + srcMovie);
 
 			//ffmepeg handle the video
-			var ffmpegCmd = "ffmpeg  -i aaa.mp4  -acodec copy -vcodec copy example.mp4"
-
-
-			var nsCmd = "python2.7 ~/home/dash/Bento4/Source/Python/utils/mp4-dash-encode.py -b 5 " + newPath + "/" + srcMovie;
-			console.log("nsCmd :\n" + nsCmd);
-
-			child_process.exec(nsCmd, options, function(error, stdout, stderr) {
-				saveNetNum = "80%";
-				saveNetMsg = "creating new video...";
+			var ffmpegCmd = "ffmpeg  -i "  + newPath + "/" + srcMovie + " -acodec copy -vcodec copy " + newPath + "/target1.mp4";
+			child = child_process.exec(ffmpegCmd, function(error, stdout, stderr) {
 				console.log('stdout: ' + stdout);
 				console.log('stderr: ' + stderr);
 				if (error !== null) {
 					console.log('exec error: ' + error);
 				}
 
+				saveNetNum = "75%";
+				saveNetMsg = "creating mpd file...";
 
-				res.redirect('/gl/dash');
-				return;
+				var bashCmd = "bash dash.sh " + newPath;
+				child = child_process.exec(bashCmd, function(error, stdout, stderr) {
+					saveNetNum = "95%";
+					saveNetMsg = "save video info...";
+					console.log('stdout: ' + stdout);
+					console.log('stderr: ' + stderr);
+					if (error !== null) {
+						console.log('exec error: ' + error);
+					}
+
+
+					MovieCate.findByTitle("DASH",function(err, MovieCate){
+						newMovieObj = new Movie({
+							title:movieObj.title,
+							content:movieInfo.content,
+							ti:movieInfo.ti,
+							si:movieInfo.si,
+							edistance:movieInfo.edistance,
+							movieCates:movieInfo.movieCates,
+							pic: newPic,
+							movie: newMovie,
+							dir : newDir,
+							showdelay: movieInfo.showdelay,
+							duration: movieInfo.duration,
+							pix_fmt: movieInfo.pix_fmt,
+							size: movieInfo.size,
+							width: movieInfo.width,
+							height: movieInfo.height,
+							fps: movieInfo.fps,
+							bps: movieInfo.bps,
+							codec_name: movieInfo.codec_name,
+							format_name: movieInfo.format_name,
+							catesName: movieInfo.catesName
+						}); 
+
+						newMovieObj.save(function(err,Movie){
+							if(err){console.log(err);}
+
+							var category = newMovieObj.movieCates;
+							console.log("category = " + category);
+
+							MovieCate.movies.push(Movie._id);
+							MovieCate.save(function(err,MovieCate2){
+								if(err){console.log(err);}
+								saveNetNum = "100%";
+								saveNetMsg = "Finished";
+							});
+						});
+					});
+				});
 			});
+
+
+
+			
 
 			return;
 
+			MovieCate.findByTitle("DASH",function(err, MovieCate){
+				newMovieObj = new Movie({
+					title:movieInfo.title,
+					content:movieInfo.content,
+					ti:movieInfo.ti,
+					si:movieInfo.si,
+					edistance:movieInfo.edistance,
+					movieCates:movieInfo.movieCates,
+					pic: newPic,
+					movie: newMovie,
+					dir : newDir,
+					showdelay: movieInfo.showdelay,
+					duration: movieInfo.duration,
+					pix_fmt: movieInfo.pix_fmt,
+					size: movieInfo.size,
+					width: movieInfo.width,
+					height: movieInfo.height,
+					fps: movieInfo.fps,
+					bps: movieInfo.bps,
+					codec_name: movieInfo.codec_name,
+					format_name: movieInfo.format_name,
+					catesName: movieInfo.catesName
+				}); 
 
-			MovieCate.find(movieInfo.movieCates,function(err,cates){
-				if(err){
-					console.log(err);
-				}
-				Network.fetch(function(err,Networks){
-					if(err){
-						console.log(err);
-					}
+				newMovieObj.save(function(err,Movie){
+					if(err){console.log(err);}
 
-					var oldNet = {
-						bandwidth: "",
-						timedelay: "",
-						packetloss: "",
-						mvWidth: movieInfo.width,
-						mvHeight: movieInfo.height,
-						fps: movieInfo.fps,
-						bps: movieInfo.bps,
-						unsharp: "1",
-					}
+					var category = newMovieObj.movieCates;
+					console.log("category = " + category);
 
-					var infoChanged = false;
-					if (oldNet.mvWidth == netObj.mvWidth && oldNet.mvHeight == netObj.mvHeight && 
-						oldNet.fps == netObj.fps && oldNet.bps == netObj.bps && oldNet.unsharp == netObj.unsharp 
-						&& movieInfo.showdelay == movieObj.showdelay) {
-						infoChanged = false;
-					} else {
-						infoChanged = true;
-					}
+					MovieCate.movies.push(Movie._id);
+					MovieCate.save(function(err,MovieCate2){
+						if(err){console.log(err);}
+						saveNetNum = "100%";
+						saveNetMsg = "Finished";
 
-					if (!(netObj.bandwidth > 0) && !(netObj.timedelay > 0) && !infoChanged){
-						res.redirect('/gl/dash');
-						return;
-					}
-
-					var width = movieInfo.width;
-					var height = movieInfo.height;
-					var fps = movieInfo.fps;
-
-					//设置了带宽，延时等网络参数，优先处理网络参数
-					if ((netObj.bandwidth > 0 || netObj.timedelay > 0) && infoChanged) {
-						netAndMovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps);
-					} else if ((netObj.bandwidth > 0 || netObj.timedelay > 0) && !infoChanged) {
-						netChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, width, height, fps);
-					} else {
-						MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj, oldNet, width, height, fps);
-					}
+						// res.redirect('/gl/Movie')
+					});
 				});
 			});
 		});
@@ -238,22 +276,22 @@ exports.saveDashParameter = function(req, res) {
 
 	return;
 
-	MovieCate.findByTitle("DASH",function(err, MovieCate){
-		if(err){console.log(err);}
-		// console.log("----MovieCate : " + JSON.stringify(MovieCate));
+	// MovieCate.findByTitle("DASH",function(err, MovieCate){
+	// 	if(err){console.log(err);}
+	// 	// console.log("----MovieCate : " + JSON.stringify(MovieCate));
 		
-		if (MovieCate) {
-			 // 获取DASH视频
-			Movie.findByCateId(MovieCate._id, function(err, movies){
-				if(err){console.log(err);}
-				// console.log("----movies : " + JSON.stringify(movies));
+	// 	if (MovieCate) {
+	// 		 // 获取DASH视频
+	// 		Movie.findByCateId(MovieCate._id, function(err, movies){
+	// 			if(err){console.log(err);}
+	// 			// console.log("----movies : " + JSON.stringify(movies));
 				
-				res.render('dashVideosList',{
-					movies:movies
-				});
-			});
-		}
-	});
+	// 			res.render('dashVideosList',{
+	// 				movies:movies
+	// 			});
+	// 		});
+	// 	}
+	// });
 }
 
 
@@ -1989,6 +2027,11 @@ exports.saveNetworkStatus = function(req,res){
 	res.json({status : saveNetNum, msg : saveNetMsg, newDir : saveNetDir});
 }
 
+exports.saveDashStatus = function(req,res){
+	console.log("status :" + saveNetNum + "    msg :" + saveNetMsg + "   newDir : " + newDir);
+	res.json({status : saveNetNum, msg : saveNetMsg, newDir : saveNetDir});
+}
+
 exports.movieCover = function(req,res){
 	console.log("-----movieCover----------------")
 	var name = req.params.name;
@@ -2331,7 +2374,7 @@ function getMaxSI(data) {
 };
 
 function mkdirNewPath() {
-	var timeDir = moment().format("YYYY-MM-DD.HH.mm.ss");
+	var timeDir = moment().format("YYYY_MM_DD_HH_mm_ss");
 	var currentPath = processor.cwd();
 	var newPath = currentPath + "/public/movie/" + timeDir;
 	console.log(newPath);
