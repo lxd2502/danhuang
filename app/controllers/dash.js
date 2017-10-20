@@ -743,7 +743,7 @@ function MovieInfoChanged(movieInfo, cates, Networks, movieObj, cateObj, netObj,
 
 
 exports.mvUpload = function(req, res){
-	console.log("-----contr/Movie.js--- mvUpload function")
+	console.log("-----contr/Dash.js--- mvUpload function")
   	var message = '';
   	var form = new formidable.IncomingForm();   //创建上传表单
     form.encoding = 'utf-8';        //设置编辑
@@ -1216,45 +1216,6 @@ exports.update = function(req,res){
 			})
 		}
 	});
-}
-
-exports.delete = function(req,res){
-	console.log("-----contr/Movie.js--- delete function")
-	var id = req.params.id;
-	console.log("id = "+id)
-	if(id){
-		Movie.findById(id,function(err,Movie){
-			var currentPath = processor.cwd() + "/public/movie/";
-			var arr = new Array();
-		    arr = Movie.movie.split("/");
-		    var file = arr[0];
-		    var cmd = "rm -rf " + currentPath+file;
-
-			console.log("srcMovie :\n" + Movie.movie);
-			console.log("cmd :\n" + cmd);
-			child = child_process.execSync(cmd,function(err,out) { 
-			  	console.log(out);
-			});
-			MovieCate.findById(Movie.movieCates, function(err, cate){
-				if(err){console.log("err = " + err)}
-				console.log("cate.movies 1 = " + cate.movies);
-				var index = cate.movies.indexOf(id);
-				cate.movies.splice(index,1);
-				console.log("cate.movies 2 = " + cate.movies);
-				cate.save
-				cate.save(function(err,MovieCate2){
-					if(err){console.log(err);}
-					Movie.remove({_id:id},function(err,Movie){
-						if(err){console.log("err = " + err)}
-						else{
-							res.json({success:1})
-						}
-					});
-				});
-			});
-			
-		});
-	}
 }
 
 exports.movieInfo = function(req,res){
