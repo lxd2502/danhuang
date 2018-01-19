@@ -100,22 +100,30 @@ function checkePlugs(pluginname) {
 
 function submitUserInfo(){
 	var id = "1";
-	console.log("submitUserInfo id = " + id);
-	var url = 'http://chaxun.1616.net/s.php?type=ip&output=json&callback=?&_='+Math.random();
-	$.getJSON(url, function(data){
-		//$("#b").html("显示：IP【"+data.Ip+"】 地址【"+data.Isp+"】 浏览器【"+data.Browser+"】 系统【"+data.OS+"】");
-		console.log('－－－ browserType = ' + browserType);
-		console.log('－－－ systemType = ' + systemType);
-		ip = data.Ip;
-		address = data.Isp;
-		browserType = data.Browser;
-		systemType = data.OS;
-		console.log('－－－ ip = ' + ip);
-		console.log('－－－ address = ' + address);
-		console.log('－－－ browserType = ' + browserType);
-		console.log('－－－ systemType = ' + systemType);
-		submitUserInfo1(id, ip, address);
-	});
+	// console.log("submitUserInfo id = " + id);
+	// var url = 'http://chaxun.1616.net/s.php?type=ip&output=json&callback=?&_='+Math.random();
+	// $.getJSON(url, function(data){
+	// 	//$("#b").html("显示：IP【"+data.Ip+"】 地址【"+data.Isp+"】 浏览器【"+data.Browser+"】 系统【"+data.OS+"】");
+	// 	console.log('－－－ browserType = ' + browserType);
+	// 	console.log('－－－ systemType = ' + systemType);
+	// 	ip = data.Ip;
+	// 	address = data.Isp;
+	// 	browserType = data.Browser;
+	// 	systemType = data.OS;
+	// 	console.log('－－－ ip = ' + ip);
+	// 	console.log('－－－ address = ' + address);
+	// 	console.log('－－－ browserType = ' + browserType);
+	// 	console.log('－－－ systemType = ' + systemType);
+	// 	submitUserInfo1(id, ip, address);
+	// });
+
+    $.getScript('http://pv.sohu.com/cityjson?ie=utf-8', function(){
+        // alert('IP: '+returnCitySN.cip+'; 城市：'+returnCitySN.cname);
+        ip = returnCitySN.cip;
+        address = returnCitySN.cname;
+        submitUserInfo1(id, ip, address);
+    });
+
 }
 
 function submitUserInfo1(id, ip, address){
