@@ -316,7 +316,12 @@ h1, h2, h3, h4, h5, h6, figure {
   left: 0;
   right: 0;
   background: #ff5db1;
-  background: linear-gradient(145deg, #4dafe8 33%, rgba(215, 234, 176, 0.1) 90%);
+  background: -moz-linear-gradient(-45deg, #ff5db1 0%, rgba(0, 87, 137, 0.7) 5%);
+  background: -webkit-gradient(left top, right bottom, color-stop(0%, #ff5db1), color-stop(5%, rgba(0, 87, 137, 0.7)));
+  background: -webkit-linear-gradient(-45deg, #ff5db1 0%, rgba(0, 87, 137, 0.7) 5%);
+  background: -o-linear-gradient(-45deg, #ff5db1 0%, rgba(0, 87, 137, 0.7) 5%);
+  background: -ms-linear-gradient(-45deg, #ff5db1 0%, rgba(0, 87, 137, 0.7) 5%);
+  background: linear-gradient(135deg, #ff5db1 0%, rgba(0, 87, 137, 0.7) 0%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff5db1', endColorstr='#005789', GradientType=1 );
 }
 .fh5co-cover > .fh5co-container {
@@ -501,7 +506,8 @@ form label {
 .fh5co-cover .display-tc h2 {
   margin: 0;
   padding: 0;
-  color: #333333;
+  color: white;
+  /*color: #333333;*/
 }
 #fh5co-header .display-tc h1,
 #fh5co-counter .display-tc h1,
