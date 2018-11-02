@@ -150,7 +150,7 @@ exports.showSignup = function(req,res){
 exports.signinRequired = function(req,res,next){
 	var user = req.session.user;
 	console.log("req.session.user = " + JSON.stringify(req.session.user));
-	if(!user){
+	if(!user && user.length){
 		return res.redirect('/signin');
 	}
 	next();

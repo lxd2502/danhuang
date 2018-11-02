@@ -19,15 +19,15 @@ function chgLang() {
 		$('#eTitle2_1').text("B.S., Network Engineering, Dept. of Computer Science, ");
 		$('#eTitle2_2').text("Beijing University of Posts and Telecommunications, China");  
 
-		$('#page').text("Publication");
+		$('#page').text("Publication & Patent");
 
 		$('#experience').text("Project Experience");
 		$('#expTime1').text("2015.10-present");
 		$('#expTitle1').text("QoE Platform for Streaming Video Services");
-		$('#expDesc1').text("• Directed the project (including organizing project schedule, supervising task completion, and demonstrating contributions) \n• Provided source video classification, QoS realization of encoding and network transmission, and context-aware user experience data gathering and analysis \n• Implemented HTTP-based content control of dynamic adaptive streaming video service, DASH content generation, and MPD file generation. Website: www.qoecenter.com");   
+		$('#expDesc1').text("• Directed the project (including organizing project schedule, supervising task completion, and demonstrating contributions) \n• Provided source video classification, QoS realization of encoding and network transmission, and context-aware user experience data gathering and analysis \n• Implemented HTTP-based content control of dynamic adaptive streaming video service, DASH content generation, and MPD file generation. ");   
 
 		$('#expTitle2').text("Geospatial Information Analysis (IBM T.J. Watson Research Center) ");
-		$('#expDesc2').text("• Provided extensible API for big data management and storage based on geospatial information analysis \n • Analyzed quality of service based on function and performance testing \n • Supervised progress completion and wrote project patents and papers. Website: https://developer.ibm.com/api/view/id-816");
+		$('#expDesc2').text("• Provided extensible API for big data management and storage based on geospatial information analysis \n • Analyzed quality of service based on function and performance testing \n • Supervised progress completion and wrote project patents and papers. ");
 
 		$('#expTime3').text("2016.01-present");
 		$('#expTitle3').text("Study on Quality of Selection Based on Mobile Internet");
@@ -70,17 +70,19 @@ function chgLang() {
 
 		$('#ha').text("Honors & Awards");
 
-		$('#haT1').text("Outstanding Graduate Student, State Key Laboratory");
-		$('#haT2').text("Outstanding Student Award, Services Society Scientist Young Forum");
-		$('#haT3').text("Outstanding Contribution Prize, ICCSA 2016,CollaborateCom 2016 & IOV 2014");
-		$('#haT4').text("Best Graduate Student Award, BUPT");
-		$('#haT5').text("Best Student Award, BUPT & First-Class Scholarship, BUPT");
-		$('#haT6').text("National Innovation Award, BUPT");
-		$('#haT7').text("Municipal Best Students Award, Education Commission of Beijing");
+		$('#haT0').text("Outstanding Graduate Student, State Key Laboratory");
+		$('#haT1').text("Outstanding Student Award, Services Society Scientist Young Forum");
+		$('#haT2').text("ICCSA 2016, Outstanding Contribution Prize, ICCSA 2016,CollaborateCom 2016 & IOV 2014");
+		$('#haT3').text("Best Graduate Student Award，BUPT & Outstanding Student Cadr，BUPT");
+		$('#haT4').text("Best Student Award，BUPT & First-Class Scholarship, BUPT");
+		$('#haT5').text("Best Student Award, BUPT & First-Class Scholarship，BUPT & National Innovation Award, BUPT");
+		$('#haT6').text("Municipal Best Students Award, Education Commission of Beijing");
+		$('#haT7').text("First Place of Team Jazz Cheerleading Competition, General Administration of Sport of China");
 
 		$('#skill').text("Skills");
 
-		$('#skill1').text("Proficient with C、C++、Java、Matlab、HTML+, CSS+, Javascript");
+		$('#skill1').text("Proficient with C、C++、Java、Matlab");
+		$('#skill2').text("Hands-on experience with Open Sources: NS2, FFmpeg, Bento4, xvid_encraw, MP4Box, X264, dash.js, Express, Jade, node.js, etc.");
 		$('#skill2').text("Good command in both written and spoken English");
 		$('#skill3').text("Quick and passionate learner, detail-focused, and rigorous attitude for scientific research");
     } else {
@@ -100,26 +102,26 @@ function chgLang() {
 		$('#eTitle2_1').text("北京邮电大学 计算机学院 ");
 		$('#eTitle2_2').text("网络工程专业 学士学位 ");
 
-		$('#page').text("研究成果");
+		$('#page').text("论文专利");
 
 		$('#experience').text("项目经历"); 
 		$('#expTime1').text("2015.10-至今");
 		$('#expTitle1').text("流媒体服务的用户体验QoE评价平台研究与开发（PHD研究项目）");
-		$('#expDesc1').text("担任项目负责人，负责整个项目的调研、需求分析、任务分配、进度跟踪和成果展示；设计和实现了流媒体服务的用户体验质量QoE评价平台，提供了流媒体服务的基于时空特征的视频分类、编码参数控制、客观评价算法、客户端用户信息、交互行为与主观评价搜集等多项技术与功能实现。提供端到端的用户体验数据采集、控制与分析；并完成基于HTTP的动态自适应流媒体服务的内容控制、DASH内容生成、MPD媒体描述文件生成、和动态流媒体播放等内容的研究与技术实现。平台所在网址为: www.qoecenter.com");
+		$('#expDesc1').text("担任项目负责人，负责整个项目的调研、需求分析、任务分配、进度跟踪和成果展示；设计和实现了视频服务的用户体验质量QoE评价平台，提供了视频服务的基于时空特征的视频分类、编码参数控制、客观评价算法、客户端用户信息、交互行为与主观评价搜集等多项技术与功能实现；提供端到端的用户体验数据采集、控制与分析和视频推荐；并完成基于HTTP的动态自适应视频服务的内容控制、DASH内容生成、MPD媒体描述文件生成、和动态视频播放等内容的研究与技术实现；平台所在网址为: www.qoecenter.com");
 
 		$('#expTitle2').text("IBM 物理信息分析与大数据索引和信息服务研究（IBM 沃森研究中心实习项目）");
-		$('#expDesc2').text("该项目提供了基于时空的地理空间信息分析与大数据管理、存储、认知分析的可扩展API；负责基于平台功能和性能测试的用户体验评测和API分析；并从服务甲酸角度对该项目的服务支撑和保障技术进行专利和论文写作。该项目及服务所在网址为: https://developer.ibm.com/api/view/id-816");
+		$('#expDesc2').text("担任实习生，该项目提供了基于时空的地理空间信息分析与大数据管理、存储、认知分析的可扩展API；负责基于平台功能和性能测试的用户体验评测和API分析；并从服务计算角度对该项目的服务支撑和保障技术进行专利和论文写作；该项目及服务所在网址为: https://developer.ibm.com/api/view/id-816");
 
 		$('#expTime3').text("2016.01-至今");
 		$('#expTitle3').text("移动互联网环境下准确与公平兼顾的服务选择方法研究（国家自然科学基金项目）");
-		$('#expDesc3').text("负责移动边缘环境下用户体验QoE感知的流媒体服务研究，通过实时感知用户上下文信息和移动边缘环境下的动态变化信息，设计了边缘云调度算法保障负载均衡和提高服务效率；根据用户对服务质量QoE的偏好信息和上下文信息，设计了基于HTTP动态流媒体的码率自适应算法，以提高移动终端的流媒体服务用户体验QoE。");
+		$('#expDesc3').text("担任组长，负责移动边缘环境下用户体验QoE感知的流媒体服务研究，通过实时感知用户上下文信息和移动边缘环境下的动态变化信息，设计了边缘云调度算法保障负载均衡和提高服务效率；根据用户对服务质量QoE的偏好信息和上下文信息，设计了基于HTTP动态流媒体的码率自适应算法，以提高移动终端的流媒体服务用户体验QoE。");
 
 		$('#expTime4').text("2015.01-至今");
 		$('#expTitle4').text("融合网络环境下服务选择机制研究（国家自然基金项目）");
 		$('#expDesc4').text("担任组长，负责基于用户偏好的准确个性化服务选择和服务推荐研究，完成了基于用户历史数据的服务认知水平计算方法研究、基于认知水平的用户偏好调整算法研究、以及基于用户偏好的服务选择方法研究；同时与小组成员一起撰写并出版了融合网络环境下服务选择和服务推荐的研究综述相关书刊。");
 
 		$('#expTitle5').text("风险决策与服务选择的脑神经机制研究（青年科技创新计划与专项重大研究项目）");
-		$('#expDesc5').text("任服务选择研究小组组长，负责面向网络服务，分析风险决策后影响用户体验质量QoE的性能指标及其复杂关联关系，建立基于脑神经认知的服务用户体验QoE模型，从而实现服务最优选择；研究主要包含面向服务选择的用户体验QoE性能指标分析研究、脑部激活区域认知的服务用户体验QoE建模、基于QoE感知的服务选择方法研究。");
+		$('#expDesc5').text("担任组长，负责面向网络服务，分析风险决策后影响用户体验质量QoE的性能指标及其复杂关联关系，建立基于脑神经认知的服务用户体验QoE模型，从而实现服务最优选择；研究主要包含面向服务选择的用户体验QoE性能指标分析研究、脑部激活区域认知的服务用户体验QoE建模、基于QoE感知的服务选择方法研究。");
 
 		$('#ice').text("实习经历和科研竞赛");
 
@@ -127,7 +129,7 @@ function chgLang() {
 		$('#iceDesc1').text("参与“物理信息分析与大数据索引和信息服务提供”项目；完成功能与性能测试，并基于测试结果进行API设计简化和性能提高；并从服务计算角度对该项目的服务支撑技术和用户体验增强等方面进行专利和论文写作。");
 
 		$('#iceTitle2').text("中国移动通信运营商实习");
-		$('#iceDesc2').text("作为中国移动公司的校园宣传实习生，参与中国移动公司额校园新生宣传活动的策划与品牌推广活动，完成了北京语言大学的新生校园推广计划，取得团队最佳宣传绩效奖。");
+		$('#iceDesc2').text("参与中国移动公司的校园新生宣传活动的策划与品牌推广活动，完成了北京语言大学的新生校园推广计划，取得团队最佳宣传绩效奖。");
 
 		$('#iceTitle3').text("新浪微博互联网公司实习");
 		$('#iceDesc3').text("作为新浪微博测试开发实习生，参与新浪微博客户端的需求分析、测试用例和测试方案撰写、测试开发平台管理、测试结果总结与整理、 用户反馈搜集与总结报告等；全程跟踪四个版本的新浪微博的需求设计、测试开发和上线提测与反馈。");
@@ -147,13 +149,14 @@ function chgLang() {
 
 		$('#paTime2').text("2010.09-至今");
 		$('#paT2_sub1').text("担任网络工程专业13班班长、手语社社长、组织部部长、14级博士党支书；");
-		$('#paT2_sub2').text("参与大量的社会志愿活动与社会实践活动，如徐悲鸿纪念馆志愿讲解员、“夕阳再晨”科技推广志愿者、“西部阳光”公益志愿者等。");
+		$('#paT2_sub2').text("参与大量的社会志愿活动与社会实践活动，如徐悲鸿纪念馆志愿讲解员等。");
 
 		$('#ha').text("所获奖励");
 
+		$('#haT0').text("北京邮电大学优秀研究生、优秀研究生干部；");
 		$('#haT1').text("网络与交换技术国家重点实验室优秀研究生；");
-		$('#haT2').text("服务计算会青年科学奖论坛（SSYSF）杰出学生奖；");
-		$('#haT3').text("ICCSA 2016, CollaborateCom2016国际会议杰出贡献奖；");
+		$('#haT2').text("服务计算学会青年科学家论坛（SSYSF）杰出学生奖Outstanding Student Award；");
+		$('#haT3').text("IOV 2014, ICCSA 2016, CollaborateCom2016国际会议杰出贡献奖；");
 		$('#haT4').text("北京邮电大学优秀研究生、优秀学生干部；");
 		$('#haT5').text("北京邮电大学一等奖学金、三好学生；");
 		$('#haT6').text("国家级优秀创新实验项目奖；大学生电子商务挑战赛三等奖；");
@@ -162,8 +165,9 @@ function chgLang() {
 		$('#skill').text("其他技能");
 
 		$('#skill1').text("熟悉C、C++、Java、Matlab、HTML+CSS+Javascript；");
-		$('#skill2').text("熟练使用英语进行听说读写、熟练阅读和撰写英文文献资料；");
-		$('#skill3').text("丰富的项目、专利申请写作经验，以及多方合作撰写英文论文的团队合作项目经历。");
+		$('#skill2').text("丰富的开源工具／库实践经验: NS2, FFmpeg, Bento4, xvid_encraw, MP4Box, X264, dash.js, Express, Jade, node.js等；");
+		$('#skill3').text("熟练使用英语进行听说读写、熟练阅读和撰写英文文献资料；");
+		$('#skill4').text("丰富的项目、专利申请写作经验，以及多方团队合作项目经历。");
     }
     
 }
